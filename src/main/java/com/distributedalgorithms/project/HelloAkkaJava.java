@@ -24,8 +24,7 @@ public class HelloAkkaJava {
             if (message instanceof Message) {
                 System.out.println("I am a client! I sent a message! ");
                 getSender().tell(new Message(), getSelf());
-            }
-            else unhandled(message);
+            } else unhandled(message);
         }
     }
 
@@ -44,12 +43,9 @@ public class HelloAkkaJava {
 
     public static void main(String[] args) {
 
-
         int numberOfActors = Options.MAX_ACTORS;
-        System.out.print(numberOfActors);
         ArrayList<ActorRef> clients = new ArrayList<ActorRef>(numberOfActors);
         ArrayList<ActorRef> servers = new ArrayList<ActorRef>(numberOfActors);
-        System.out.print(clients.size());
 
         try {
 
@@ -59,7 +55,7 @@ public class HelloAkkaJava {
             // Populate array of processes
             for (int i = 0; i < numberOfActors; i++) {
                 clients.add(system.actorOf(Props.create(Client.class), "c" + String.valueOf(i + 1)));
-                servers.add(system.actorOf(Props.create(Server.class), "s" + String.valueOf(i + 1)));
+                servers.add(system.actorOf(Props.create(Monitor.class), "s" + String.valueOf(i + 1)));
             }
 
             system.scheduler().schedule(Duration.Zero(), Duration.create(1, TimeUnit.SECONDS), clients.get(0), new Message(), system.dispatcher(), servers.get(0));
