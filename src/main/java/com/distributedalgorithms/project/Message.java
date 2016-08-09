@@ -1,17 +1,26 @@
 package com.distributedalgorithms.project;
 
 import java.io.Serializable;
+import java.util.UUID;
+import static java.util.UUID.randomUUID;
 
 /**
  * Created by Roberto on 30/06/16.
  */
-public class Message implements Serializable {
+class Message implements Serializable {
 
-    private VectorClock vc = new VectorClock();
+    private UUID id;
     private Object data;
+    private VectorClock vc;
 
-    public Message() {
-        data = new String("ABC");
+    Message(VectorClock vc) {
+        this.id = randomUUID();
+        this.data = "ABC";
+        this.vc = vc;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public Object getData() {
@@ -22,11 +31,11 @@ public class Message implements Serializable {
         this.data = data;
     }
 
-    public VectorClock getVc() {
+    public VectorClock getVectorClock() {
         return vc;
     }
 
-    public void setVc(VectorClock vc) {
+    public void setVectorClock(VectorClock vc) {
         this.vc = vc;
     }
 }

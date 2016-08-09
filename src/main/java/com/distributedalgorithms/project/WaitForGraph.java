@@ -48,6 +48,6 @@ public class WaitForGraph {
 
     @Override
     public String toString() {
-        return "List of vertexes: " + wfg.vertexSet();
+        return "List of vertexes: " + wfg.vertexSet() + "\nList of edges: " + wfg.edgeSet();
     }
 }
