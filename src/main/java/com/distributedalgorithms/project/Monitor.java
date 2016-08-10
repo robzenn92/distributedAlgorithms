@@ -2,7 +2,7 @@
  * Project for the "Distributed Algorithms" course
  * Academic Year: 2015/2016
  * Zen Roberto, Student ID: 171182.
- * Bof Michele, Student ID: 123456.
+ * Bof Michele, Student ID: NaN.
  */
 
 package com.distributedalgorithms.project;
@@ -10,9 +10,9 @@ package com.distributedalgorithms.project;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.distributedalgorithms.messages.EndMessage;
+import com.distributedalgorithms.messages.StartMessage;
 import com.distributedalgorithms.options.Options;
-import com.distributedalgorithms.project.HelloAkkaJava.StartMessage;
-import com.distributedalgorithms.project.HelloAkkaJava.EndMessage;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -24,10 +24,12 @@ import java.util.ArrayList;
 
 class Monitor extends UntypedActor {
 
-    // private WaitForGraph wfg = new WaitForGraph();
+    private long startTime;
+
+    private int endMessagesReceived = 0;
 
     private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
-    private int endMessagesReceived = 0;
+
     private ArrayList<Event> eventsList[] = new ArrayList[Options.MAX_PEERS];
     private FileOutputStream fop;
 
@@ -36,12 +38,16 @@ class Monitor extends UntypedActor {
         // Send the current greeting back to the sender
         if (message instanceof StartMessage) {
 
-            log.info("Start listening..");
-            /* DO STUFF */
+            // Catch when the start message is delivered.
+            // It is better and more precise (of course more expansive) if we measure the execution time in Nanoseconds.
+            this.startTime = Options.getCurrentTime();
+
+            log.info("Start listening at " + startTime);
+            log.info("I will receive from everybody an EndMessage in " + Options.SIMULATION_TIME + " " + Options.SIMULATION_TIME_UNIT + ".");
         }
         else if (message instanceof EndMessage) {
 
-            eventsList[endMessagesReceived] = ((EndMessage) message).getEvents();
+            eventsList[((EndMessage) message).getId()] = ((EndMessage) message).getEvents();
             endMessagesReceived++;
 
             // Check if EndMessages arrived from all the peers

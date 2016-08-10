@@ -1,8 +1,12 @@
+/**
+ * Project for the "Distributed Algorithms" course
+ * Academic Year: 2015/2016
+ * Zen Roberto, Student ID: 171182.
+ * Bof Michele, Student ID: NaN.
+ */
+
 package com.distributedalgorithms.project;
 
-/**
- * Created by Roberto on 09/08/16.
- */
 class ProcessVertex {
 
     private String name = "";

@@ -2,7 +2,7 @@
  * Project for the "Distributed Algorithms" course
  * Academic Year: 2015/2016
  * Zen Roberto, Student ID: 171182.
- * Bof Michele, Student ID: 123456.
+ * Bof Michele, Student ID: NaN.
  */
 
 package com.distributedalgorithms.project;
@@ -14,25 +14,25 @@ package com.distributedalgorithms.project;
  * There is no real time clock, so an event is constituted by a vector clock, the id of the peer who raise the event
  * and a name which might be a description of the event itself.
  */
-class Event {
+public class Event {
 
     private int peerId;                 // Id of the peer who executed the event
     private String description = "";    // The description of the event
     private VectorClock vc;             // Its VectorClock
 
-    Event(int peerId) {
+    public Event(int peerId) {
         this.peerId = peerId;
         this.vc = new VectorClock(peerId);
     }
 
-    Event(int peerId, VectorClock vc) {
+    public Event(int peerId, VectorClock vc) {
         this.peerId = peerId;
         this.vc = vc;
     }
 
     // Getters and Setters
 
-    VectorClock getVectorClock() {
+    public VectorClock getVectorClock() {
         return this.vc;
     }
 

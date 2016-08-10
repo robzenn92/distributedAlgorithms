@@ -1,19 +1,24 @@
-package com.distributedalgorithms.project;
+/**
+ * Project for the "Distributed Algorithms" course
+ * Academic Year: 2015/2016
+ * Zen Roberto, Student ID: 171182.
+ * Bof Michele, Student ID: NaN.
+ */
+package com.distributedalgorithms.messages;
+
+import com.distributedalgorithms.project.VectorClock;
 
 import java.io.Serializable;
 import java.util.UUID;
 import static java.util.UUID.randomUUID;
 
-/**
- * Created by Roberto on 30/06/16.
- */
-class Message implements Serializable {
+public class Message implements Serializable {
 
     private UUID id;
     private Object data;
     private VectorClock vc;
 
-    Message(VectorClock vc) {
+    public Message(VectorClock vc) {
         this.id = randomUUID();
         this.data = "A beautiful content";
         this.vc = vc;

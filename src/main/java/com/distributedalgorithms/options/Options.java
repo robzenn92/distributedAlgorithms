@@ -2,7 +2,7 @@
  * Project for the "Distributed Algorithms" course
  * Academic Year: 2015/2016
  * Zen Roberto, Student ID: 171182.
- * Bof Michele, Student ID: 123456.
+ * Bof Michele, Student ID: NaN.
  */
 
 package com.distributedalgorithms.options;
@@ -35,11 +35,36 @@ public final class Options {
      */
     public static final float PROB_INTERNAL_EVENT = 0.5f;
 
-    public static final int DELTA_TIME = 2500;
-    public static TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+    /**
+     * DO NOT CHANGE FROM HERE
+     * ---------------------
+     */
 
+    public static final TimeUnit PRECISION_TIME_UNIT = TimeUnit.MILLISECONDS;
+
+    public static final int DELTA_TIME = 5000;
+    public static final TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     public static final int SIMULATION_TIME = 5000;
+    public static final TimeUnit SIMULATION_TIME_UNIT = TimeUnit.MILLISECONDS;
 
+    /**
+     * DO NOT CHANGE UP HERE
+     * ---------------------
+     */
+
+    /**
+     * Get the Current Time in the system based on the preference we defined as PRECISION_TIME_UNIT.
+     * It is better and more precise (although it is more expansive) if we measure time in Nanoseconds.
+     *
+     * @return a long value of the current time in the system
+     */
+    public static long getCurrentTime() {
+        return (Options.PRECISION_TIME_UNIT == TimeUnit.NANOSECONDS) ? System.nanoTime() : System.currentTimeMillis();
+    }
+
+    public static boolean checkConfigurationFile() {
+        return true;
+    }
 
 }
