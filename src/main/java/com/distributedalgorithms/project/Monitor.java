@@ -20,7 +20,7 @@ import org.jgrapht.graph.DefaultEdge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 class Monitor extends UntypedActor {
 
@@ -64,7 +64,7 @@ class Monitor extends UntypedActor {
 
     private void buildLattice(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1) {
 
-        DirectedGraph<String, DefaultEdge> lattice = new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+        DirectedGraph<ProcessVertex, DefaultEdge> lattice = new DefaultDirectedGraph<ProcessVertex, DefaultEdge>(DefaultEdge.class);
 
         if (index0 < l0.size() && index1 < l1.size()) {
 
@@ -75,7 +75,7 @@ class Monitor extends UntypedActor {
             boolean pairwiseInconsistent = event0.getVectorClock().isPairwiseInconsistent(event1.getVectorClock());
             if (!pairwiseInconsistent) {
 
-                String node = String.valueOf(index0) + String.valueOf(index1);
+                ProcessVertex node = new ProcessVertex(String.valueOf(index0) , String.valueOf(index1));
                 lattice.addVertex(node);
 
                 buildLatticeRec(index0 + 1, index1, l0, l1, lattice, node);
@@ -83,11 +83,12 @@ class Monitor extends UntypedActor {
             }
 
             System.out.println(lattice.toString());
+            writeLatticeOnFile(lattice);
 
         }
     }
 
-    private void buildLatticeRec(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1, DirectedGraph<String, DefaultEdge> lattice, String parent){
+    private void buildLatticeRec(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1, DirectedGraph<ProcessVertex, DefaultEdge> lattice, ProcessVertex parent){
 
         if (index0 < l0.size() && index1 < l1.size()) {
 
@@ -97,9 +98,10 @@ class Monitor extends UntypedActor {
 
             boolean pairwiseInconsistent = event0.getVectorClock().isPairwiseInconsistent(event1.getVectorClock());
             if (!pairwiseInconsistent) {
-                String node = String.valueOf(index0) + String.valueOf(index1);
+                ProcessVertex node = new ProcessVertex(String.valueOf(index0) , String.valueOf(index1));
                 lattice.addVertex(node);
                 lattice.addEdge(parent, node);
+                parent.addParent(node);
 
                 buildLatticeRec(index0 + 1, index1, l0, l1, lattice, node);
                 buildLatticeRec(index0, index1 + 1, l0, l1, lattice, node);
@@ -107,41 +109,87 @@ class Monitor extends UntypedActor {
         }
     }
 
-    private void writeLatticeOnFile() {
+    private void writeLatticeOnFile(DirectedGraph<ProcessVertex, DefaultEdge> lattice) {
+        Vector<ProcessVertex> ris = new Vector<ProcessVertex>();
+        for (ProcessVertex pv:lattice.vertexSet()) {
+            ris.add(pv);
+        };
+        Collections.sort(ris);
+        for (int i = 0; i< ris.size(); i++){
+            System.out.println(ris.get(i).toString());
+        }
+
+        ProcessVertex test = new ProcessVertex("6","4");
+        ProcessVertex test1   = new ProcessVertex("5","4");
+        System.out.print(test.equals(test1));
 
         FileOutputStream fop =  null;
         File file;
-        String content = "This is the text content";
 
-        try {
 
-            file = new File("../lattice.txt");
-            fop = new FileOutputStream(file);
+//        Vector<String> level = new Vector<String>(index0+index1+1);
+//
+//        //inizializzo il vettore con stringhe vuote
+//        for (int i = 0; i < index0+index1+1; i++) {
+//            level.add("");
+//        }
+//        //livello iniziale, indice 00
+//        level.set(0, "digraph item_set {\n" +
+//                "\n" +
+//                "// set edge attribute\n" +
+//                "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
+//                "splines=false\n" +
+//                "\n" +
+//                "// the 1o layer\n" +
+//                "00 [label = \"00\"];\n");
+//
+//
+//        for (int i = 1; i < vec.size(); i++) {
+//            index0 = vec.get(i)/10;
+//            index1 = vec.get(i)%10;
+//            int somma = index0+index1;
+//            level.set(somma, level.get(somma)+ index0 + index1 + " [label = \""+ index0 + index1 +"\"];\n");
+//        }
+//
+//        System.out.print(level.get(0));
+//        for (int i = 1; i < level.size(); i++) {
+//            System.out.println("// the "+(i+1)+"o layer");
+//            System.out.print(level.get(i));
+//            System.out.println();
+//        }
 
-            // if file doesnt exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            // get the content in bytes
-            byte[] contentInBytes = content.getBytes();
-
-            fop.write(contentInBytes);
-            fop.flush();
-            fop.close();
-
-            System.out.println("Done");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (fop != null) {
-                    fop.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        try {
+//
+//            file = new File("../lattice.dot");
+//            fop = new FileOutputStream(file);
+//
+//            // if file doesnt exists, then create it
+//            if (!file.exists()) {
+//                file.createNewFile();
+//            }
+//
+//            // get the content in bytes
+//            byte[] contentInBytes = content.getBytes();
+//
+//            fop.write(contentInBytes);
+//            fop.flush();
+//            fop.close();
+//
+//            System.out.println("Done");
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (fop != null) {
+//                    fop.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
+
+
+
 }
