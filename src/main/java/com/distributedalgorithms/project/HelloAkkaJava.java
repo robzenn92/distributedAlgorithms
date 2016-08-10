@@ -1,6 +1,6 @@
 /**
  * Project for the "Distributed Algorithms" course
- * Acadamic Year: 2015/2016
+ * Academic Year: 2015/2016
  * Zen Roberto, Student ID: 171182.
  * Bof Michele, Student ID: 123456.
  */
@@ -14,13 +14,10 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
 import com.distributedalgorithms.options.Options;
-import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
 public class HelloAkkaJava {
 
     /**
@@ -33,11 +30,11 @@ public class HelloAkkaJava {
      * building a fully connected graph between all the nodes in the system.
      * These messages do not cause any update of processes' Vector clocks.
      */
-    private static class StartMessage {
+    static class StartMessage {
 
         // Contains the list of peers which will be part of the system
         // Used in order to build a fully connected graph between all the nodes in the network
-        private ArrayList<ActorRef> peers = new ArrayList<ActorRef>(Options.MAX_ACTORS - 1);
+        private ArrayList<ActorRef> peers = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
 
         StartMessage(ArrayList<ActorRef> peers) {
             this.peers = peers;
@@ -54,7 +51,26 @@ public class HelloAkkaJava {
      * These messages are sent by the monitor towards all the peers. They are used in order to END the simulation.
      * These messages do not cause any update of processes' Vector clocks.
      */
-    static class EndMessage {}
+    static class EndMessage {
+
+        // Contains the list of events of a single process which will be sent to the monitor
+        // in order to build the lattice.
+        private ArrayList<Event> events;
+
+        // The id of the process sender
+        private int id;
+
+        public EndMessage(ArrayList<Event> events, int id) {
+            this.events = events;
+            this.id = id;
+        }
+
+        ArrayList<Event> getEvents() {
+            return this.events;
+        }
+
+        int getId () { return this.id; }
+    }
 
     /**
      * Description of the class: Peer
@@ -65,7 +81,7 @@ public class HelloAkkaJava {
         private int id;
         private final ActorRef monitor;
         private boolean running = false;
-        private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_ACTORS - 1);
+        private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
         private ArrayList<Event> events = new ArrayList<Event>();
         private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
@@ -119,78 +135,89 @@ public class HelloAkkaJava {
 
         private void startRandomExecution() {
 
-            float prob = 0.5f;      // Probability of send a message to a neighbour
-            float res_prob;         // Random Probability
-            int delta = 2500;       // 5000 Milliseconds
-            Random rand;            // Random generator
-
+            Random rand;    // Random generator
 
             int i = 0;
 
             while(running) {
 
 
-                if (i == 5) {
+                if (i == 3) {
                     return;
                 }
                 i++;
 
-                // for each neighbour
+                // For each neighbour
                 for(final ActorRef p:this.neighbours) {
 
-                    // get prob of send a message to that neighbour
-                    // get random numb between 0 and 1
+                    // Get random integer between 0 and DELTA_TIME.
+                    // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME TIME_UNIT.
+                    // Values defined in the Options class.
                     rand = new Random();
-                    res_prob = rand.nextFloat();
+                    int scheduled = rand.nextInt(Options.DELTA_TIME);
+                    FiniteDuration duration = FiniteDuration.create(scheduled, Options.TIME_UNIT);
 
-                    // if random number > prob then I can schedule to send a message to him
-                    if (res_prob > prob) {
+                    // I schedule what to do (send message or execute internal event) in the next future.
+                    getContext().system().scheduler().scheduleOnce(
+                        duration,
+                        new Runnable() {
+                            public void run() {
 
-                        rand = new Random();
-                        int scheduled = rand.nextInt(delta);
-                        FiniteDuration duration = Duration.create(scheduled, TimeUnit.MILLISECONDS);
+                                // Get random real number between 0 and 1.
+                                // This will be the probability we will use to decide if the process
+                                // has to execute an internal event rather than send a message to one of its neighbours.
+                                Random rand = new Random();
+                                float resulting_prob = rand.nextFloat();
 
-                        getContext().system().scheduler().scheduleOnce(
-                            duration,
-                            new Runnable() {
-                                public void run() {
+                                // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+                                VectorClock last = events.get(events.size() - 1).getVectorClock();
+                                VectorClock current = new VectorClock(id, last);
+                                Event e = new Event(id, current);
 
-                                    VectorClock last = events.get(events.size() - 1).getVectorClock();
-                                    VectorClock current = new VectorClock(id, last);
-                                    Event e = new Event(id, current);
-                                    Message m = new Message(current);
-                                    events.add(e);
+                                // As result, we have chosen to execute an internal event
+                                if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
 
-                                    log.info(getSelf() + " had last vc = " + last + " | has now a vc = " + current + " | sent message " + m.getId() + " to " + p.path());
-                                    p.tell(m, getSelf());
-
+                                    // I just want to know remember that this was an internal event
+                                    e.setDescription("INTERNAL EVENT");
+                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
                                 }
-                            }, getContext().dispatcher());
-                    }
+                                else { // As result, we have chosen to send a message to one of our neighbours
+
+                                    // The message is prepared and sent to p (the neighbour selected), the event is logged.
+                                    e.setDescription("SEND EVENT");
+                                    Message m = new Message(current);
+                                    p.tell(m, getSelf());
+                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I SENT message " + m.getId() + " to " + p.path());
+                                }
+
+                                // I append my last event to my history.
+                                events.add(e);
+                            }
+                        }, getContext().dispatcher()
+                    );
                 }
             }
         }
 
         private void stopRandomExecution() {
 
-            // Get last Event's VectorClock
-//            VectorClock last = events.get(events.size() - 1).getVectorClock();
-//            Event end = new Event(id, "END", last);
-//            events.add(end);
-//
-//            String str_event = getSelf() + " has final vc= ";
-//            for(Event e:events) {
-//                str_event += e.toString();
-//            }
-//            log.info(str_event);
+            FiniteDuration duration = FiniteDuration.create(Options.SIMULATION_TIME, Options.TIME_UNIT);
 
-//            monitor.tell(new EndMessage(), getSelf());
+            // I schedule to send to the monitor an EndMessage which contains the list of events.
+            getContext().system().scheduler().scheduleOnce(
+                    duration,
+                    new Runnable() {
+                        public void run() {
+                            monitor.tell(new EndMessage(events, id), getSelf());
+                        }
+                    }, getContext().dispatcher()
+            );
         }
     }
 
     public static void main(String[] args) {
 
-        int numberOfActors = Options.MAX_ACTORS;
+        int numberOfActors = Options.MAX_PEERS;
         ArrayList<ActorRef> peers = new ArrayList<ActorRef>(numberOfActors);
 
         try {

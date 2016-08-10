@@ -1,6 +1,6 @@
 /**
  * Project for the "Distributed Algorithms" course
- * Acadamic Year: 2015/2016
+ * Academic Year: 2015/2016
  * Zen Roberto, Student ID: 171182.
  * Bof Michele, Student ID: 123456.
  */
@@ -16,9 +16,9 @@ package com.distributedalgorithms.project;
  */
 class Event {
 
-    private int peerId;         // Id of the peer who executed the event
-    private String name = "";   // Name of the event, description
-    private VectorClock vc;     // Event's VectorClock
+    private int peerId;                 // Id of the peer who executed the event
+    private String description = "";    // The description of the event
+    private VectorClock vc;             // Its VectorClock
 
     Event(int peerId) {
         this.peerId = peerId;
@@ -30,14 +30,18 @@ class Event {
         this.vc = vc;
     }
 
-    Event(int peerId, VectorClock vc, String name) {
-        this.peerId = peerId;
-        this.name = name;
-        this.vc = vc;
-    }
+    // Getters and Setters
 
     VectorClock getVectorClock() {
         return this.vc;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

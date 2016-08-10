@@ -15,7 +15,7 @@ class Message implements Serializable {
 
     Message(VectorClock vc) {
         this.id = randomUUID();
-        this.data = "ABC";
+        this.data = "A beautiful content";
         this.vc = vc;
     }
 

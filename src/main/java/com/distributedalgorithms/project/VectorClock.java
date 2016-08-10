@@ -12,7 +12,7 @@ class VectorClock {
 
     VectorClock(int id) {
         setId_process(id);
-        vectors = new int[Options.MAX_ACTORS];
+        vectors = new int[Options.MAX_PEERS];
     }
 
     VectorClock(int id, VectorClock last) {
@@ -26,14 +26,14 @@ class VectorClock {
     }
 
     private void update(VectorClock last) {
-        for (int i = 0; i < Options.MAX_ACTORS; i++) {
+        for (int i = 0; i < Options.MAX_PEERS; i++) {
             vectors[i] = last.getElement(i);
         }
         vectors[last.getId_process()] += 1;
     }
 
     private void update(VectorClock last, VectorClock msg){
-        for (int i = 0; i < Options.MAX_ACTORS; i++) {
+        for (int i = 0; i < Options.MAX_PEERS; i++) {
             vectors[i] = Math.max(last.getElement(i), msg.getElement(i));
         }
         vectors[last.getId_process()] += 1;
