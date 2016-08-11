@@ -19,10 +19,13 @@ import com.distributedalgorithms.messages.Message;
 import com.distributedalgorithms.messages.StartMessage;
 
 import com.distributedalgorithms.options.Options;
+import scala.concurrent.ExecutionContext;
+import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Description of the class: Peer
@@ -137,7 +140,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 ////        currentTime = currentTime - startTime;
 ////        this.endTime = this.endTime - startTime;
 //
-////        log.info("curr time: " + (currentTime - startTime) + " end " + (this.endTime - startTime));
+//        log.info("curr time: " + (currentTime - startTime) + " end " + (this.endTime - startTime));
 //
 //        while (currentTime < endTime) {
 //
@@ -175,7 +178,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 //                // Oh, seems you have enough time to schedule a new event in the future..
 //                if (nextAction < this.endTime) {
 //
-////                    log.info("Event executed at: "+ (currentTime - startTime) +", remain blocked till " + (nextAction - startTime) + " end time at: " + (endTime - startTime));
+//                    log.info("Event executed at: "+ (currentTime - startTime) +", remain blocked till " + (nextAction - startTime) + " end time at: " + (endTime - startTime));
 //
 //                    try {
 //
@@ -188,7 +191,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 //                        // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
 //                        VectorClock last = events.get(events.size() - 1).getVectorClock();
 //                        VectorClock current = new VectorClock(id, last);
-//                        Event e = new Event(id, current);
+//                        Event e = new Event(id, current, 1);
 //
 //                        // As result, we have chosen to execute an internal event.
 //                        if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
@@ -229,16 +232,20 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 //            else {
 //
 //                blocked = !(nextAction < currentTime);
-////                if(!blocked) {
-////                    log.info("sbloccato");
-////                }
+//                if(!blocked) {
+//                    log.info("sbloccato");
+//                }
 ////                log.info("I was blocked and now: blocked = " + blocked + " | currentTime = " + currentTime + " | NextAction = " +nextAction);
 //            }
 //        }
 //
 //        // The simulation ended.
 //        // Let's collect all the events and send them to the monitor.
-//        monitor.tell(new EndMessage(id, events), getSelf());
+//
+//        getContext().system().scheduler().scheduleOnce(Duration.create(2000, TimeUnit.MILLISECONDS),
+//                monitor, new EndMessage(id, events), getContext().dispatcher(), getSelf());
+//
+////        monitor.tell(new EndMessage(id, events), getSelf());
 //    }
 
 // ZEN ZEN ZEN ZEN ZEN ZEN FINE PRIMA
@@ -372,80 +379,105 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     // ZEN ZEN ZEN ZEN ZEN SECONDA
     // ZEN ZEN ZEN ZEN ZEN SECONDA
     // ZEN ZEN ZEN ZEN ZEN SECONDA
-
+//
     private void startRandomExecution() {
 
-        Random rand;    // Random generator
+        Random rand;            // Random generator
+        long currentTime;       // Current time
+        long nextAction = 0;    // How long does it takes before the next action is executed
+        long nearFuture = 0;
 
-        int i = 0;
+        // What time is it? It's current time!
+        currentTime = Options.getCurrentTime();
+//        currentTime = currentTime - startTime;
+//        this.endTime = this.endTime - startTime;
 
-        boolean running = true;
-        while(running) {
+        log.info("curr time: " + (currentTime - startTime) + " end " + (this.endTime - startTime));
 
+        while (nextAction < (endTime - startTime)) {
 
-            if (i == 8) {
-                monitor.tell(new EndMessage(id, events), getSelf());
-                return;
+            // What time is it? It's current time!
+//            currentTime = Options.getCurrentTime();
+
+            // Get random integer between 0 and DELTA_TIME.
+            // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME DELTA_TIME_UNIT.
+            // Values defined in the Options class.
+            rand = new Random();
+            nearFuture = rand.nextInt(Options.DELTA_TIME);
+
+            // The time scheduled is defined in term Options.DELTA_TIME and Options.DELTA_TIME_UNIT.
+            // It might be the case that this time is defined in Options.SIMULATION_TIME_UNIT, convert it.
+            // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
+            // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
+            if (Options.DELTA_TIME_UNIT != Options.PRECISION_TIME_UNIT) {
+                nextAction += Options.PRECISION_TIME_UNIT.convert(nearFuture, Options.DELTA_TIME_UNIT);
+            } else {
+                nextAction += nearFuture; //rand.nextInt(Options.DELTA_TIME);
             }
-            i++;
 
-            // For each neighbour
-            for(final ActorRef p:this.neighbours) {
+//            log.info("A new action will be executed at " + nextAction);
 
-                // Get random integer between 0 and DELTA_TIME.
-                // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME TIME_UNIT.
-                // Values defined in the Options class.
-                rand = new Random();
-                int scheduled = rand.nextInt(Options.DELTA_TIME);
-                FiniteDuration duration = FiniteDuration.create(scheduled, Options.DELTA_TIME_UNIT);
+            FiniteDuration future = FiniteDuration.create(nearFuture, Options.DELTA_TIME_UNIT);
 
-                // I schedule what to do (send message or execute internal event) in the next future.
-                getContext().system().scheduler().scheduleOnce(
-                        duration,
-                        new Runnable() {
-                            public void run() {
+            log.info("Scheduled message at: " + nextAction);
 
-                                try {
+            // I schedule what to do (send message or execute internal event) in the next future.
+            getContext().system().scheduler().scheduleOnce(
+                    future,
+                    new Runnable() {
+                        public void run() {
 
-                                    // Get random real number between 0 and 1.
-                                    // This will be the probability we will use to decide if the process
-                                    // has to execute an internal event rather than send a message to one of its neighbours.
-                                    Random rand = new Random();
-                                    float resulting_prob = rand.nextFloat();
+                            try {
 
-                                    // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
-                                    VectorClock last = events.get(events.size() - 1).getVectorClock();
-                                    VectorClock current = new VectorClock(id, last);
-                                    modifyVar(id);
-                                    Event e = new Event(id, current, variable);
+                                // Get random real number between 0 and 1.
+                                // This will be the probability we will use to decide if the process
+                                // has to execute an internal event rather than send a message to one of its neighbours.
+                                Random rand = new Random();
+                                float resulting_prob = rand.nextFloat();
 
-                                    // As result, we have chosen to execute an internal event
-                                    if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+                                // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+                                VectorClock last = events.get(events.size() - 1).getVectorClock();
+                                VectorClock current = new VectorClock(id, last);
+                                Event e = new Event(id, current, 1);
 
-                                        // I just want to know remember that this was an internal event
-                                        e.setDescription("INTERNAL EVENT");
-                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
-                                    } else { // As result, we have chosen to send a message to one of our neighbours
+                                // As result, we have chosen to execute an internal event.
+                                if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
 
-                                        // The message is prepared and sent to p (the neighbour selected), the event is logged.
-                                        e.setDescription("SEND EVENT");
-                                        Message m = new Message(current);
-                                        p.tell(m, getSelf());
-                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I SENT message " + m.getId() + " to " + p.path());
-                                    }
+                                    // I just want to know remember that this was an internal event.
+                                    e.setDescription("INTERNAL EVENT");
+//                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
 
-                                    // I append my last event to my history.
-                                    events.add(e);
+                                } else { // As result, we have chosen to send a message to one of our neighbours.
 
-                                } catch (Exception excep) {
-                                    log.info("Exception: ");
-                                    excep.printStackTrace();
+                                    // Chose randomly a recipient from the set of neighbours.
+                                    rand = new Random();
+                                    int recipientId = rand.nextInt(Options.MAX_PEERS - 1);
+                                    ActorRef recipient = neighbours.get(recipientId);
+
+                                    // The message is ready to be sent to selected recipient.
+                                    e.setDescription("SEND EVENT");
+                                    Message m = new Message(current);
+                                    recipient.tell(m, getSelf());
+
+                                    // The event is logged.
+//                                    log.info("My last VC = " + last + " | Now my VC = " +
+//                                            current + " | I SENT message " + m.getId() + " to " + recipient.path());
                                 }
+
+                                // I append this last event to my history.
+                                events.add(e);
+
+                            } catch (Exception exc) {
+                                exc.printStackTrace();
                             }
-                        }, getContext().dispatcher()
-                );
-            }
+                        }
+                    }, getContext().dispatcher()
+            );
         }
+
+        log.info("Scheduled message to MONITOR at: " + nextAction);
+        getContext().system().scheduler().scheduleOnce(Duration.create(nextAction, Options.PRECISION_TIME_UNIT),
+                monitor, new EndMessage(id, events), getContext().dispatcher(), getSelf());
     }
 
     // ZEN ZEN ZEN ZEN ZEN FINE SECONDA

@@ -47,20 +47,22 @@ class Monitor extends UntypedActor {
         }
         else if (message instanceof EndMessage) {
 
+            System.out.println("Received");
+
             eventsList[((EndMessage) message).getId()] = ((EndMessage) message).getEvents();
             endMessagesReceived++;
 
             // Check if EndMessages arrived from all the peers
             if (endMessagesReceived == Options.MAX_PEERS) {
 
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
                 System.out.println("\n\n" + eventsList[0].toString() + "\n\n" + eventsList[1].toString() + "\n\n");
-//                buildLattice(0, 0, eventsList[0], eventsList[1]);
+                buildLattice(0, 0, eventsList[0], eventsList[1]);
             }
         }
         else {

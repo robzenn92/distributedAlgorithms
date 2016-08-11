@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import com.distributedalgorithms.messages.StartMessage;
 import com.distributedalgorithms.options.Options;
+import scala.concurrent.ExecutionContext;
 
 public class Simulator {
 
@@ -33,12 +34,14 @@ public class Simulator {
 
             // Create the monitor, which will build the lattice and run the evaluation on it.
             // The monitor has been define in Monitor.class.
-            final ActorRef monitor = system.actorOf(Props.create(Monitor.class), "monitor");
+            final ActorRef monitor = system.actorOf(Props.create(Monitor.class).withDispatcher("my-dispatcher"), "monitor");
+
+//            final ExecutionContext ex = system.dispatchers().lookup("my-dispatcher");
 
             // Populate the array of peers.
             ArrayList<ActorRef> peers = new ArrayList<ActorRef>(Options.MAX_PEERS);
             for (int i = 0; i < Options.MAX_PEERS; i++) {
-                peers.add(system.actorOf(Props.create(Peer.class, i, monitor), "peer" + String.valueOf(i)));
+                peers.add(system.actorOf(Props.create(Peer.class, i, monitor).withDispatcher("my-dispatcher"), "peer" + String.valueOf(i)));
             }
 
             // Select everybody in the system via path selection: "/user/*" = peers and monitor.

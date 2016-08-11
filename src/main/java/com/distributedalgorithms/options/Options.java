@@ -47,7 +47,7 @@ public final class Options {
 
     public static final TimeUnit PRECISION_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final int DELTA_TIME = 200;
+    public static final int DELTA_TIME = 1000;
     public static final TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     public static final int SIMULATION_TIME = 5;
@@ -70,6 +70,15 @@ public final class Options {
 
     public static boolean checkConfigurationFile() {
         return true;
+
+//          in peer startRandomSim
+//        if ( x > (long)Integer.MAX_VALUE ) {
+//            // x is too big to convert, throw an exception or something useful
+//        }
+//        else {
+//            y = (int)x;
+//        }
+
     }
 
 }
