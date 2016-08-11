@@ -42,11 +42,11 @@ public final class Options {
 
     public static final TimeUnit PRECISION_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final int DELTA_TIME = 5000;
+    public static final int DELTA_TIME = 200;
     public static final TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final int SIMULATION_TIME = 5000;
-    public static final TimeUnit SIMULATION_TIME_UNIT = TimeUnit.MILLISECONDS;
+    public static final int SIMULATION_TIME = 5;
+    public static final TimeUnit SIMULATION_TIME_UNIT = TimeUnit.SECONDS;
 
     /**
      * DO NOT CHANGE UP HERE

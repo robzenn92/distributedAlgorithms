@@ -23,7 +23,6 @@ import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Description of the class: Peer
@@ -73,7 +72,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                     ((StartMessage) message).getSimulationTimeUnits()
             );
 
-            log.info("Start executing at time: " + startTime);
+//            log.info("Start executing at time: " + startTime + " will end at time: " + endTime);
 
             // Start up the fully connected graph network:
             // I received the list of all the peers in the network, I need to remove myself from the list
@@ -108,6 +107,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
         } else {
 
+            log.info("unhandled message");
             unhandled(message);
         }
     }
@@ -115,43 +115,284 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     /**
      * Start sending asynchronous messages to random peers, till the simulation ends (currentTime = endTime).
      */
+
+
+    // ZEN ZEN ZEN ZEN ZEN ZEN PRIMA
+    // ZEN ZEN ZEN ZEN ZEN ZEN PRIMA
+    // ZEN ZEN ZEN ZEN ZEN ZEN PRIMA
+
+//    private void startRandomExecution() {
+//
+//        Random rand;            // Random generator
+//        long currentTime;       // Current time
+//        long nextAction = 0;    // How long does it takes before the next action is executed
+//
+//        // What time is it? It's current time!
+//        currentTime = Options.getCurrentTime();
+////        currentTime = currentTime - startTime;
+////        this.endTime = this.endTime - startTime;
+//
+////        log.info("curr time: " + (currentTime - startTime) + " end " + (this.endTime - startTime));
+//
+//        while (currentTime < endTime) {
+//
+//            // What time is it? It's current time!
+//            currentTime = Options.getCurrentTime();
+////            currentTime = currentTime - startTime;
+//
+////            log.info("entro while, blocked = "+blocked);
+//
+//            if (!blocked) {
+//
+//                blocked = true;
+//
+////                log.info("Non era bloccato, ora si, blocked = " + blocked);
+//
+//                // Get random integer between 0 and DELTA_TIME.
+//                // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME DELTA_TIME_UNIT.
+//                // Values defined in the Options class.
+//                rand = new Random();
+//                long scheduled = Options.DELTA_TIME; //rand.nextInt(Options.DELTA_TIME);
+//
+//                //log.info("Generated: " + scheduled);
+////                FiniteDuration duration = FiniteDuration.create(scheduled, Options.DELTA_TIME_UNIT);
+//
+//                // The time scheduled is defined in term Options.DELTA_TIME and Options.DELTA_TIME_UNIT.
+//                // It might be the case that this time is defined in Options.SIMULATION_TIME_UNIT, convert it.
+//                // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
+//                // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
+//                nextAction = scheduled;
+//                if (Options.DELTA_TIME_UNIT != Options.PRECISION_TIME_UNIT) {
+//                    nextAction = Options.PRECISION_TIME_UNIT.convert(scheduled, Options.DELTA_TIME_UNIT);
+//                }
+//                nextAction = currentTime + nextAction;
+//
+//                // Oh, seems you have enough time to schedule a new event in the future..
+//                if (nextAction < this.endTime) {
+//
+////                    log.info("Event executed at: "+ (currentTime - startTime) +", remain blocked till " + (nextAction - startTime) + " end time at: " + (endTime - startTime));
+//
+//                    try {
+//
+//                        // Get random real number between 0 and 1.
+//                        // This will be the probability we will use to decide if the process
+//                        // has to execute an internal event rather than send a message to one of its neighbours.
+//                        rand = new Random();
+//                        float resulting_prob = rand.nextFloat();
+//
+//                        // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+//                        VectorClock last = events.get(events.size() - 1).getVectorClock();
+//                        VectorClock current = new VectorClock(id, last);
+//                        Event e = new Event(id, current);
+//
+//                        // As result, we have chosen to execute an internal event.
+//                        if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+//
+//                            // I just want to know remember that this was an internal event.
+//                            e.setDescription("INTERNAL EVENT");
+//                            log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
+//
+//                        } else { // As result, we have chosen to send a message to one of our neighbours.
+//
+//                            // Chose randomly a recipient from the set of neighbours.
+//                            rand = new Random();
+//                            int recipientId = rand.nextInt(Options.MAX_PEERS - 1);
+//                            ActorRef recipient = neighbours.get(recipientId);
+//
+//                            // The message is ready to be sent to selected recipient.
+//                            e.setDescription("SEND EVENT");
+//                            Message m = new Message(current);
+//                            recipient.tell(m, getSelf());
+//
+//                            // The event is logged.
+//                            log.info("My last VC = " + last + " | Now my VC = " +
+//                                    current + " | I SENT message " + m.getId() + " to " + recipient.path());
+//                        }
+//
+//                        // I append this last event to my history.
+//                        events.add(e);
+//
+//                    } catch (Exception exc) {
+//                        exc.printStackTrace();
+//                    }
+//                }
+//                else {
+////                    log.info("generato troppo in la, blocked = false");
+//                    blocked = false;
+//                }
+//            }
+//            else {
+//
+//                blocked = !(nextAction < currentTime);
+////                if(!blocked) {
+////                    log.info("sbloccato");
+////                }
+////                log.info("I was blocked and now: blocked = " + blocked + " | currentTime = " + currentTime + " | NextAction = " +nextAction);
+//            }
+//        }
+//
+//        // The simulation ended.
+//        // Let's collect all the events and send them to the monitor.
+//        monitor.tell(new EndMessage(id, events), getSelf());
+//    }
+
+// ZEN ZEN ZEN ZEN ZEN ZEN FINE PRIMA
+// ZEN ZEN ZEN ZEN ZEN ZEN FINE PRIMA
+// ZEN ZEN ZEN ZEN ZEN ZEN FINE PRIMA
+
+//
+//
+//            blocked = (nextAction < currentTime);
+//
+//            // If nextAction already executed
+//            if (!blocked) {
+//
+//                // Get random integer between 0 and DELTA_TIME.
+//                // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME DELTA_TIME_UNIT.
+//                // Values defined in the Options class.
+//                rand = new Random();
+//                long scheduled = rand.nextInt(Options.DELTA_TIME);
+////                FiniteDuration duration = FiniteDuration.create(scheduled, Options.DELTA_TIME_UNIT);
+//
+//                // The time scheduled is defined in term Options.DELTA_TIME and Options.DELTA_TIME_UNIT.
+//                // It might be the case that this time is defined in Options.SIMULATION_TIME_UNIT, convert it.
+//                // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
+//                // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
+//                nextAction = scheduled;
+//                if (Options.DELTA_TIME_UNIT != Options.PRECISION_TIME_UNIT) {
+//                    nextAction = Options.PRECISION_TIME_UNIT.convert(scheduled, Options.DELTA_TIME_UNIT);
+//                }
+//
+//                // Oh, seems you have enough time to schedule a new event in the future..
+//                if(currentTime + nextAction < this.endTime) {
+//
+//                    blocked = true;
+//
+//                    log.info("CURR: " +
+//                            TimeUnit.MILLISECONDS.convert((currentTime - startTime), Options.SIMULATION_TIME_UNIT) +
+//                            " | END: " + TimeUnit.MILLISECONDS.convert((endTime - startTime), Options.SIMULATION_TIME_UNIT));
+//
+//                }
+//
+//
+//
+////            System.out.println("current time: " + currentTime + " end time: " + endTime);
+//
+//            // Establishes if the simulation can run or not based on the current time and the SIMULATION_TIME.
+//            // Let's take a look if you have enough time to continue your simulation..
+////            if(currentTime >= this.endTime) {
+////                break;
+////            }
+////            if ((currentTime - startTime) >= (endTime - startTime)) {
+////                break;
+////            }
+//
+////            log.info("CURR: " +
+////                    TimeUnit.MILLISECONDS.convert((currentTime - startTime), Options.SIMULATION_TIME_UNIT) +
+////                    " | END: " + TimeUnit.MILLISECONDS.convert((endTime - startTime), Options.SIMULATION_TIME_UNIT));
+//
+//
+//            // Oh, seems you have enough time to schedule a new event in the future..
+//            if(currentTime + nextAction < this.endTime && !blocked) {
+//
+//                blocked = true;
+//
+//                log.info("CURR: " +
+//                        TimeUnit.MILLISECONDS.convert((currentTime - startTime), Options.SIMULATION_TIME_UNIT) +
+//                        " | END: " + TimeUnit.MILLISECONDS.convert((endTime - startTime), Options.SIMULATION_TIME_UNIT));
+//
+////                        (currentTime - startTime) + " | END: " + (endTime - startTime));
+//
+////                // I schedule what to do (send message or execute internal event) in the next future.
+////                getContext().system().scheduler().scheduleOnce(
+////                        duration,
+////                        new Runnable() {
+////                            public void run() {
+////
+//                                /*try {
+//
+//                                    // Get random real number between 0 and 1.
+//                                    // This will be the probability we will use to decide if the process
+//                                    // has to execute an internal event rather than send a message to one of its neighbours.
+//                                    rand = new Random();
+//                                    float resulting_prob = rand.nextFloat();
+//
+//                                    // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+//                                    VectorClock last = events.get(events.size() - 1).getVectorClock();
+//                                    VectorClock current = new VectorClock(id, last);
+//                                    Event e = new Event(id, current);
+//
+//                                    // As result, we have chosen to execute an internal event.
+//                                    if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+//
+//                                        // I just want to know remember that this was an internal event.
+//                                        e.setDescription("INTERNAL EVENT");
+//                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
+//
+//                                    } else { // As result, we have chosen to send a message to one of our neighbours.
+//
+//                                        // Chose randomly a recipient from the set of neighbours.
+//                                        rand = new Random();
+//                                        int recipientId = rand.nextInt(Options.MAX_PEERS - 1);
+//                                        ActorRef recipient = neighbours.get(recipientId);
+//
+//                                        // The message is ready to be sent to selected recipient.
+//                                        e.setDescription("SEND EVENT");
+//                                        Message m = new Message(current);
+//                                        recipient.tell(m, getSelf());
+//
+//                                        // The event is logged.
+//                                        log.info("My last VC = " + last + " | Now my VC = " +
+//                                                current + " | I SENT message " + m.getId() + " to " + recipient.path());
+//                                    }
+//
+//                                    // I append this last event to my history.
+//                                    events.add(e);
+//                                    blocked = false;
+//
+//                                } catch (Exception exc) {
+//                                    exc.printStackTrace();
+//                                }
+//*/
+//
+////                            }
+////                        }, getContext().dispatcher()
+////                );
+//            }
+//        }
+
+//    }
+
+
+    // ZEN ZEN ZEN ZEN ZEN SECONDA
+    // ZEN ZEN ZEN ZEN ZEN SECONDA
+    // ZEN ZEN ZEN ZEN ZEN SECONDA
+
     private void startRandomExecution() {
 
-        Random rand;            // Random generator
-        long currentTime;       // Current time
-        long nextAction;        // How many Nanoseconds have to pass
+        Random rand;    // Random generator
 
-        while(true) {
+        int i = 0;
 
-            // Get random integer between 0 and DELTA_TIME.
-            // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME DELTA_TIME_UNIT.
-            // Values defined in the Options class.
-            rand = new Random();
-            long scheduled = rand.nextInt(Options.DELTA_TIME);
-            FiniteDuration duration = FiniteDuration.create(scheduled, Options.DELTA_TIME_UNIT);
+        boolean running = true;
+        while(running) {
 
-            // The time scheduled is defined in term Options.DELTA_TIME and Options.DELTA_TIME_UNIT.
-            // It might be the case that this time is defined in Options.SIMULATION_TIME_UNIT, convert it.
-            // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
-            // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
-            nextAction = scheduled;
-            if (Options.DELTA_TIME_UNIT != Options.PRECISION_TIME_UNIT) {
-                nextAction = Options.PRECISION_TIME_UNIT.convert(scheduled, Options.DELTA_TIME_UNIT);
+
+            if (i == 8) {
+                monitor.tell(new EndMessage(id, events), getSelf());
+                return;
             }
+            i++;
 
-            // What time is it? It's nano time!
-            currentTime = Options.getCurrentTime();
+            // For each neighbour
+            for(final ActorRef p:this.neighbours) {
 
-            // Establishes if the simulation can run or not based on the current time and the SIMULATION_TIME.
-            // Let's take a look if you have enough time to continue your simulation..
-            if(currentTime >= this.endTime) {
-                break;
-            }
-
-            // Oh, seems you have enough time to schedule a new event in the future..
-            if(currentTime + nextAction < this.endTime && !blocked) {
-
-                blocked = true;
+                // Get random integer between 0 and DELTA_TIME.
+                // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME TIME_UNIT.
+                // Values defined in the Options class.
+                rand = new Random();
+                int scheduled = rand.nextInt(Options.DELTA_TIME);
+                FiniteDuration duration = FiniteDuration.create(scheduled, Options.DELTA_TIME_UNIT);
 
                 // I schedule what to do (send message or execute internal event) in the next future.
                 getContext().system().scheduler().scheduleOnce(
@@ -159,57 +400,45 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                         new Runnable() {
                             public void run() {
 
-                                try {
+                                // Get random real number between 0 and 1.
+                                // This will be the probability we will use to decide if the process
+                                // has to execute an internal event rather than send a message to one of its neighbours.
+                                Random rand = new Random();
+                                float resulting_prob = rand.nextFloat();
 
-                                    // Get random real number between 0 and 1.
-                                    // This will be the probability we will use to decide if the process
-                                    // has to execute an internal event rather than send a message to one of its neighbours.
-                                    Random rand = new Random();
-                                    float resulting_prob = rand.nextFloat();
+                                // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+                                VectorClock last = events.get(events.size() - 1).getVectorClock();
+                                VectorClock current = new VectorClock(id, last);
+                                Event e = new Event(id, current);
 
-                                    // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
-                                    VectorClock last = events.get(events.size() - 1).getVectorClock();
-                                    VectorClock current = new VectorClock(id, last);
-                                    Event e = new Event(id, current);
+                                // As result, we have chosen to execute an internal event
+                                if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
 
-                                    // As result, we have chosen to execute an internal event.
-                                    if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
-
-                                        // I just want to know remember that this was an internal event.
-                                        e.setDescription("INTERNAL EVENT");
-                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
-                                    } else { // As result, we have chosen to send a message to one of our neighbours.
-
-                                        // Chose randomly a recipient from the set of neighbours.
-                                        rand = new Random();
-                                        int recipientId = rand.nextInt(Options.MAX_PEERS - 1);
-                                        ActorRef recipient = neighbours.get(recipientId);
-
-                                        // The message is ready to be sent to selected recipient.
-                                        e.setDescription("SEND EVENT");
-                                        Message m = new Message(current);
-                                        recipient.tell(m, getSelf());
-
-                                        // The event is logged.
-                                        log.info("My last VC = " + last + " | Now my VC = " +
-                                                current + " | I SENT message " + m.getId() + " to " + recipient.path());
-                                    }
-
-                                    // I append this last event to my history.
-                                    events.add(e);
-                                    blocked = false;
-
-                                } catch (Exception exc) {
-                                    exc.printStackTrace();
+                                    // I just want to know remember that this was an internal event
+                                    e.setDescription("INTERNAL EVENT");
+                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
                                 }
+                                else { // As result, we have chosen to send a message to one of our neighbours
+
+                                    // The message is prepared and sent to p (the neighbour selected), the event is logged.
+                                    e.setDescription("SEND EVENT");
+                                    Message m = new Message(current);
+                                    p.tell(m, getSelf());
+                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I SENT message " + m.getId() + " to " + p.path());
+                                }
+
+                                // I append my last event to my history.
+                                events.add(e);
                             }
                         }, getContext().dispatcher()
                 );
             }
         }
-
-        // The simulation ended.
-        // Let's collect all the events and send them to the monitor.
-        monitor.tell(new EndMessage(id, events), getSelf());
     }
+
+    // ZEN ZEN ZEN ZEN ZEN FINE SECONDA
+    // ZEN ZEN ZEN ZEN ZEN FINE SECONDA
+    // ZEN ZEN ZEN ZEN ZEN FINE SECONDA
+
+
 }
