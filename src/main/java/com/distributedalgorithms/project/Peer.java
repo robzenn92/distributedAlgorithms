@@ -445,7 +445,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
                                     // I just want to know remember that this was an internal event.
                                     e.setDescription("INTERNAL EVENT");
-//                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
+                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
 
                                 } else { // As result, we have chosen to send a message to one of our neighbours.
 
@@ -460,8 +460,8 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                                     recipient.tell(m, getSelf());
 
                                     // The event is logged.
-//                                    log.info("My last VC = " + last + " | Now my VC = " +
-//                                            current + " | I SENT message " + m.getId() + " to " + recipient.path());
+                                    log.info("My last VC = " + last + " | Now my VC = " +
+                                            current + " | I SENT message " + m.getId() + " to " + recipient.path());
                                 }
 
                                 // I append this last event to my history.

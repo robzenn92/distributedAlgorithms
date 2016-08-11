@@ -33,7 +33,7 @@ public final class Options {
      * This means that during an execution of a process, the probability that an internal event happens is the
      * same as the one for a send event.
      */
-    public static final float PROB_INTERNAL_EVENT = 0.5f;
+    public static final float PROB_INTERNAL_EVENT = 0.0f;
 
 
 
@@ -78,6 +78,10 @@ public final class Options {
 //        else {
 //            y = (int)x;
 //        }
+
+        // Probability cannot be more than 1.0f but more then 0.0f.
+
+        // PRECISION_TIME_UNIT in milliseconds or nanoseconds, others are not allowed
 
     }
 
