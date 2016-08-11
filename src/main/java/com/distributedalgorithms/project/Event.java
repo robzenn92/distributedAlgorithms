@@ -7,6 +7,9 @@
 
 package com.distributedalgorithms.project;
 
+import com.distributedalgorithms.options.Options;
+import java.util.Random;
+
 /**
  * Description of the class: Event
  *
@@ -19,15 +22,18 @@ public class Event {
     private int peerId;                 // Id of the peer who executed the event
     private String description = "";    // The description of the event
     private VectorClock vc;             // Its VectorClock
+    private int variable;               // For predicates
 
-    public Event(int peerId) {
+    public Event(int peerId, int value) {
         this.peerId = peerId;
         this.vc = new VectorClock(peerId);
+        this.variable = value;
     }
 
-    public Event(int peerId, VectorClock vc) {
+    public Event(int peerId, VectorClock vc, int value) {
         this.peerId = peerId;
         this.vc = vc;
+        this.variable = value;
     }
 
     // Getters and Setters
@@ -47,5 +53,14 @@ public class Event {
     @Override
     public String toString() {
         return vc.toString();
+    }
+
+
+    public int getVariable() {
+        return variable;
+    }
+
+    public void setVariable(int variable) {
+        this.variable = variable;
     }
 }

@@ -41,6 +41,8 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     // The list of all the peers I can communicate with (that's why neighbours) except me.
     private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
 
+    private int variable;
+
     // My history of events.
     private ArrayList<Event> events = new ArrayList<Event>();
 
@@ -79,8 +81,11 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             this.neighbours = (ArrayList<ActorRef>) ((StartMessage) message).getPeers().clone();
             this.neighbours.remove(getSelf());
 
+            Random rand = new Random();
+            int start_value = rand.nextInt(Options.MAX_INT);
+            this.variable= start_value;
             // Set up my VectorClock to the default value.
-            events.add(new Event(id));
+            events.add(new Event(id, start_value));
 
             // Start a random execution:
             // Up to this point every peer in the system has executed one local event just to set its Vector clock.
@@ -95,9 +100,9 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             // Update my VectorClock based on the previous one and the last VectorClock
             // of the peer which sent me this Message.
             VectorClock current = new VectorClock(id, last, ((Message) message).getVectorClock());
-
+            modifyVar(id);
             // Raise a new local event with the current VectorClock, and add it to my history.
-            Event e = new Event(id, current);
+            Event e = new Event(id, current, this.variable);
             events.add(e);
 
             log.info("My last VC was " + last +
@@ -400,35 +405,42 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                         new Runnable() {
                             public void run() {
 
-                                // Get random real number between 0 and 1.
-                                // This will be the probability we will use to decide if the process
-                                // has to execute an internal event rather than send a message to one of its neighbours.
-                                Random rand = new Random();
-                                float resulting_prob = rand.nextFloat();
+                                try {
 
-                                // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
-                                VectorClock last = events.get(events.size() - 1).getVectorClock();
-                                VectorClock current = new VectorClock(id, last);
-                                Event e = new Event(id, current);
+                                    // Get random real number between 0 and 1.
+                                    // This will be the probability we will use to decide if the process
+                                    // has to execute an internal event rather than send a message to one of its neighbours.
+                                    Random rand = new Random();
+                                    float resulting_prob = rand.nextFloat();
 
-                                // As result, we have chosen to execute an internal event
-                                if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+                                    // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
+                                    VectorClock last = events.get(events.size() - 1).getVectorClock();
+                                    VectorClock current = new VectorClock(id, last);
+                                    modifyVar(id);
+                                    Event e = new Event(id, current, variable);
 
-                                    // I just want to know remember that this was an internal event
-                                    e.setDescription("INTERNAL EVENT");
-                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
+                                    // As result, we have chosen to execute an internal event
+                                    if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+
+                                        // I just want to know remember that this was an internal event
+                                        e.setDescription("INTERNAL EVENT");
+                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I executed an INTERNAL EVENT");
+                                    } else { // As result, we have chosen to send a message to one of our neighbours
+
+                                        // The message is prepared and sent to p (the neighbour selected), the event is logged.
+                                        e.setDescription("SEND EVENT");
+                                        Message m = new Message(current);
+                                        p.tell(m, getSelf());
+                                        log.info("My last VC = " + last + " | Now my VC = " + current + " | I SENT message " + m.getId() + " to " + p.path());
+                                    }
+
+                                    // I append my last event to my history.
+                                    events.add(e);
+
+                                } catch (Exception excep) {
+                                    log.info("Exception: ");
+                                    excep.printStackTrace();
                                 }
-                                else { // As result, we have chosen to send a message to one of our neighbours
-
-                                    // The message is prepared and sent to p (the neighbour selected), the event is logged.
-                                    e.setDescription("SEND EVENT");
-                                    Message m = new Message(current);
-                                    p.tell(m, getSelf());
-                                    log.info("My last VC = " + last + " | Now my VC = " + current + " | I SENT message " + m.getId() + " to " + p.path());
-                                }
-
-                                // I append my last event to my history.
-                                events.add(e);
                             }
                         }, getContext().dispatcher()
                 );
@@ -441,4 +453,17 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     // ZEN ZEN ZEN ZEN ZEN FINE SECONDA
 
 
+    public void modifyVar(int id){
+
+        // Get random real number between 0 and 1.
+        // This will be the probability we will use to decide if the event
+        // modify the variable of the peer or not.
+        Random rand = new Random();
+        float prob = rand.nextFloat();
+        if (prob > Options.PROB_CHANGE_VARIABLE){
+            rand = new Random();
+            int value = rand.nextInt(Options.MAX_INT);
+            variable = value;
+        }
+    }
 }

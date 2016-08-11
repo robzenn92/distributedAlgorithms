@@ -53,7 +53,12 @@ class Monitor extends UntypedActor {
             // Check if EndMessages arrived from all the peers
             if (endMessagesReceived == Options.MAX_PEERS) {
 
-                log.info("FINISHED");
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 System.out.println("\n\n" + eventsList[0].toString() + "\n\n" + eventsList[1].toString() + "\n\n");
 //                buildLattice(0, 0, eventsList[0], eventsList[1]);
             }
@@ -66,7 +71,6 @@ class Monitor extends UntypedActor {
     private void buildLattice(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1) {
 
         DirectedGraph<ProcessVertex, DefaultEdge> lattice = new DefaultDirectedGraph<ProcessVertex, DefaultEdge>(DefaultEdge.class);
-
         if (index0 < l0.size() && index1 < l1.size()) {
 
             Event event0, event1;
@@ -116,80 +120,87 @@ class Monitor extends UntypedActor {
             ris.add(pv);
         };
         Collections.sort(ris);
-        for (int i = 0; i< ris.size(); i++){
-            System.out.println(ris.get(i).toString());
-        }
 
-        ProcessVertex test = new ProcessVertex("6","4");
-        ProcessVertex test1   = new ProcessVertex("5","4");
-        System.out.print(test.equals(test1));
 
         FileOutputStream fop =  null;
         File file;
 
+        int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
+        Vector<String> level = new Vector<String>();    //vettore contenente i vertici del lattice divisi in livelli
 
-//        Vector<String> level = new Vector<String>(index0+index1+1);
-//
-//        //inizializzo il vettore con stringhe vuote
-//        for (int i = 0; i < index0+index1+1; i++) {
-//            level.add("");
-//        }
-//        //livello iniziale, indice 00
-//        level.set(0, "digraph item_set {\n" +
-//                "\n" +
-//                "// set edge attribute\n" +
-//                "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
-//                "splines=false\n" +
-//                "\n" +
-//                "// the 1o layer\n" +
-//                "00 [label = \"00\"];\n");
-//
-//
-//        for (int i = 1; i < vec.size(); i++) {
-//            index0 = vec.get(i)/10;
-//            index1 = vec.get(i)%10;
-//            int somma = index0+index1;
-//            level.set(somma, level.get(somma)+ index0 + index1 + " [label = \""+ index0 + index1 +"\"];\n");
-//        }
-//
-//        System.out.print(level.get(0));
-//        for (int i = 1; i < level.size(); i++) {
-//            System.out.println("// the "+(i+1)+"o layer");
-//            System.out.print(level.get(i));
-//            System.out.println();
-//        }
 
-//        try {
-//
-//            file = new File("../lattice.dot");
-//            fop = new FileOutputStream(file);
-//
-//            // if file doesnt exists, then create it
-//            if (!file.exists()) {
-//                file.createNewFile();
-//            }
-//
-//            // get the content in bytes
-//            byte[] contentInBytes = content.getBytes();
-//
-//            fop.write(contentInBytes);
-//            fop.flush();
-//            fop.close();
-//
-//            System.out.println("Done");
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (fop != null) {
-//                    fop.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+
+        //inizializzo il vettore con stringhe vuote
+        for (int i = 0; i < somma; i++) {
+            level.add("");
+        }
+
+
+        //livello iniziale, indice 00
+        String content= "digraph item_set {\n" +
+                "\n" +
+                "// set edge attribute\n" +
+                "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
+                "splines=false\n" +
+                "\n" +
+                "// the 1o layer\n" +
+                "00 [label = \"00\"];\n" ;
+
+
+        for (int i = 1; i < ris.size(); i++) {
+            somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
+            level.set(somma, level.get(somma)+ ris.get(i).toString() + " [label = \""+ ris.get(i).toString() +"\"];\n");
+        }
+
+        System.out.print(level.get(0));
+        for (int i = 1; i < level.size(); i++) {
+            content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
+        }
+
+        //inserisco per ogni vertice i suoi figli
+        for (int i = 0; i < ris.size(); i++) {
+            ProcessVertex tmp = ris.get(i);
+            if(tmp.hasParent()) {
+                content+=tmp.toString() + " -> " + tmp.getParentsString()+"\n";
+            }
+        }
+        content+="}";
+
+
+
+        try {
+
+            file = new File("src/main/java/com/distributedalgorithms/out/lattice.dot");
+            fop = new FileOutputStream(file);
+
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            // get the content in bytes
+            byte[] contentInBytes = content.getBytes();
+
+            fop.write(contentInBytes);
+            fop.flush();
+            fop.close();
+
+            System.out.println("Done");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fop != null) {
+                    fop.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+
 
 
 
