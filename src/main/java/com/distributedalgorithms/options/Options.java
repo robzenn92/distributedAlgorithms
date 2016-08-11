@@ -35,6 +35,11 @@ public final class Options {
      */
     public static final float PROB_INTERNAL_EVENT = 0.5f;
 
+
+
+    public static final float PROB_CHANGE_VARIABLE = 0.5f;
+    public static final int MAX_INT = 10;
+
     /**
      * DO NOT CHANGE FROM HERE
      * ---------------------

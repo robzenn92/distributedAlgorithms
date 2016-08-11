@@ -42,6 +42,8 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     // The list of all the peers I can communicate with (that's why neighbours) except me.
     private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
 
+    private int variable;
+
     // My history of events.
     private ArrayList<Event> events = new ArrayList<Event>();
 
@@ -80,8 +82,11 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             this.neighbours = (ArrayList<ActorRef>) ((StartMessage) message).getPeers().clone();
             this.neighbours.remove(getSelf());
 
+            Random rand = new Random();
+            int start_value = rand.nextInt(Options.MAX_INT);
+            this.variable= start_value;
             // Set up my VectorClock to the default value.
-            events.add(new Event(id));
+            events.add(new Event(id, start_value));
 
             // Start a random execution:
             // Up to this point every peer in the system has executed one local event just to set its Vector clock.
@@ -96,9 +101,9 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             // Update my VectorClock based on the previous one and the last VectorClock
             // of the peer which sent me this Message.
             VectorClock current = new VectorClock(id, last, ((Message) message).getVectorClock());
-
+            modifyVar(id);
             // Raise a new local event with the current VectorClock, and add it to my history.
-            Event e = new Event(id, current);
+            Event e = new Event(id, current, this.variable);
             events.add(e);
 
             log.info("My last VC was " + last +
@@ -170,7 +175,8 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                                     // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
                                     VectorClock last = events.get(events.size() - 1).getVectorClock();
                                     VectorClock current = new VectorClock(id, last);
-                                    Event e = new Event(id, current);
+                                    modifyVar(id);
+                                    Event e = new Event(id, current,variable);
 
                                     // As result, we have chosen to execute an internal event.
                                     if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
@@ -211,5 +217,19 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
         // The simulation ended.
         // Let's collect all the events and send them to the monitor.
         monitor.tell(new EndMessage(id, events), getSelf());
+    }
+
+    public void modifyVar(int id){
+
+        // Get random real number between 0 and 1.
+        // This will be the probability we will use to decide if the event
+        // modify the variable of the peer or not.
+        Random rand = new Random();
+        float prob = rand.nextFloat();
+        if (prob > Options.PROB_CHANGE_VARIABLE){
+            rand = new Random();
+            int value = rand.nextInt(Options.MAX_INT);
+            variable = value;
+        }
     }
 }

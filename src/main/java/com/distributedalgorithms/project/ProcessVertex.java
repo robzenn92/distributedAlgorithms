@@ -36,6 +36,16 @@ class ProcessVertex implements Comparable<ProcessVertex>{
         parent.add(pv);
     }
 
+    public boolean hasParent(){ return this.parent.size()!=0; }
+
+    public String getParentsString(){
+        String ris="{";
+        for (ProcessVertex pv:this.parent) {
+            ris+=pv.toString()+",";
+        }
+        return ris.substring(0,ris.length()-1)+"}";
+    }
+
     @Override
     public String toString() {
         return this.peer0+this.peer1;
@@ -43,7 +53,18 @@ class ProcessVertex implements Comparable<ProcessVertex>{
 
     @Override
     public boolean equals(Object obj) {
-        return peer0.equals(((ProcessVertex)obj).getFirst()) && peer1.equals(((ProcessVertex)obj).getSecond());
+        if (obj == null || !(obj instanceof ProcessVertex)) {
+            return false;
+        }
+        else return this.toString().equals(obj.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Integer.parseInt(this.peer0);
+        hash = 71 * hash + Integer.parseInt(this.peer1);
+        return hash;
     }
 
     public int compareTo(ProcessVertex pv) {
