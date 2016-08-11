@@ -33,14 +33,16 @@ public final class Options {
      * This means that during an execution of a process, the probability that an internal event happens is the
      * same as the one for a send event.
      */
-    public static final float PROB_INTERNAL_EVENT = 0.0f;
+    public static final float PROB_INTERNAL_EVENT = 0.5f;
 
 
 
     public static final float PROB_CHANGE_VARIABLE = 0.5f;
     public static final int MAX_INT = 10;
 
+    public static final String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
     /**
+     * Simulation time options
      * DO NOT CHANGE FROM HERE
      * ---------------------
      */
@@ -50,7 +52,7 @@ public final class Options {
     public static final int DELTA_TIME = 1000;
     public static final TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final int SIMULATION_TIME = 5;
+    public static final int SIMULATION_TIME = 2;
     public static final TimeUnit SIMULATION_TIME_UNIT = TimeUnit.SECONDS;
 
     /**

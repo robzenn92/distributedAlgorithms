@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="package" basedir=".">
+	<target name="init">
+		<property name="sourceFolder" value="src" />
+		<property name="outputFolder" value="out" />
+	</target>
+	<target name="clean" depends="init">
+		<delete dir="${outputFolder}" />
+	</target>
+	<target name="prepare" depends="clean">
+		<mkdir dir="${outputFolder}" />
+	</target>
+	<target name="compile" depends="prepare">
+		<javac srcdir="${sourceFolder}" destdir="${outputFolder}">
+		</javac>
+	</target>
+	<target name="package" depends="compile">
+		<jar jarfile="gpe.jar" includes="**/*.class" basedir="out">
+			<manifest>
+				<attribute name="Main-Class" value="come.distributedalgorithms.project.Simulator" />
+			</manifest>
+		</jar>
+	</target>
+</project>

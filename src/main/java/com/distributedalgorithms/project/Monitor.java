@@ -16,6 +16,7 @@ import com.distributedalgorithms.options.Options;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.w3c.dom.events.EventTarget;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,8 +24,6 @@ import java.io.IOException;
 import java.util.*;
 
 class Monitor extends UntypedActor {
-
-    private long startTime;
 
     private int endMessagesReceived = 0;
 
@@ -40,26 +39,16 @@ class Monitor extends UntypedActor {
 
             // Catch when the start message is delivered.
             // It is better and more precise (of course more expansive) if we measure the execution time in Nanoseconds.
-            this.startTime = Options.getCurrentTime();
-
-            log.info("Start listening at " + startTime);
+            log.info("Start listening at " + Options.getCurrentTime());
             log.info("I will receive from everybody an EndMessage in " + Options.SIMULATION_TIME + " " + Options.SIMULATION_TIME_UNIT + ".");
         }
         else if (message instanceof EndMessage) {
-
-            System.out.println("Received");
 
             eventsList[((EndMessage) message).getId()] = ((EndMessage) message).getEvents();
             endMessagesReceived++;
 
             // Check if EndMessages arrived from all the peers
             if (endMessagesReceived == Options.MAX_PEERS) {
-
-//                try {
-//                    Thread.sleep(5000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
 
                 System.out.println("\n\n" + eventsList[0].toString() + "\n\n" + eventsList[1].toString() + "\n\n");
                 buildLattice(0, 0, eventsList[0], eventsList[1]);
@@ -75,9 +64,8 @@ class Monitor extends UntypedActor {
         DirectedGraph<ProcessVertex, DefaultEdge> lattice = new DefaultDirectedGraph<ProcessVertex, DefaultEdge>(DefaultEdge.class);
         if (index0 < l0.size() && index1 < l1.size()) {
 
-            Event event0, event1;
-            event0 = l0.get(index0);
-            event1 = l1.get(index1);
+            Event event0 = l0.get(index0);
+            Event event1 = l1.get(index1);
 
             boolean pairwiseInconsistent = event0.getVectorClock().isPairwiseInconsistent(event1.getVectorClock());
             if (!pairwiseInconsistent) {
@@ -91,7 +79,6 @@ class Monitor extends UntypedActor {
 
             System.out.println(lattice.toString());
             writeLatticeOnFile(lattice);
-
         }
     }
 
@@ -99,9 +86,8 @@ class Monitor extends UntypedActor {
 
         if (index0 < l0.size() && index1 < l1.size()) {
 
-            Event event0, event1;
-            event0 = l0.get(index0);
-            event1 = l1.get(index1);
+            Event event0 = l0.get(index0);
+            Event event1 = l1.get(index1);
 
             boolean pairwiseInconsistent = event0.getVectorClock().isPairwiseInconsistent(event1.getVectorClock());
             if (!pairwiseInconsistent) {
@@ -172,7 +158,7 @@ class Monitor extends UntypedActor {
 
         try {
 
-            file = new File("src/main/java/com/distributedalgorithms/out/lattice.dot");
+            file = new File(Options.LATTICE_OUTPUT_DOT_FILE_PATH);
             fop = new FileOutputStream(file);
 
             // if file doesnt exists, then create it
@@ -201,9 +187,4 @@ class Monitor extends UntypedActor {
             }
         }
     }
-
-
-
-
-
 }
