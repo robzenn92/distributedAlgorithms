@@ -55,10 +55,9 @@ The objectives which we have set ourselves are the following:
 
 We developed a practical solution to the GPE problem based on a random simulation of distrubuted computations. The project has been develop in Java using JDK version's $1.7$ in combination with the Akka framework which allowed us to build an highly concurrent, distributed, and resilient message-driven application\footnote{\url{http://akka.io}}. We started implementing the behaviour of the peers and then we defined the message exchange between them. In particolar, we adopted a simple strategy for structure messages in a way that they were able to transport all the information needed at the very end of the simulation. To conclude, we defined the behaviour of the monitor such that it was able to collect all the messages exchanged between the peers and evaluate a given predicate over them building consistend global states stored in a lattice of events.
 
-
 \subsection*{Outline}
 
-The outline of this report is structured as follows: Section
+The outline of this report is structured as follows. Section 2 describes the problem of GPE while Section 3 explains details about the solution we propose, the problems we faced and the strategies we adopted to overcome them. Section 4 shows some experimental evaluation of our implementation. The last section states the conclusion of the work.
 
 \section{The Problem}
 
