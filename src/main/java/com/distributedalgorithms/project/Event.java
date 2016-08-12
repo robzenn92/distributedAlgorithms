@@ -60,7 +60,4 @@ public class Event {
         return variable;
     }
 
-    public void setVariable(int variable) {
-        this.variable = variable;
-    }
 }
