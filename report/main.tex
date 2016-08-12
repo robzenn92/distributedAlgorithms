@@ -6,23 +6,18 @@
 \usepackage{fancyhdr}
 \usepackage{url}
 
-% \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usetikzlibrary{arrows}
+\usepackage{verbatim}
 
 \pagestyle{fancy}
-
-\lhead{}
-\chead{\bfseries Distributed Algorithms' Report}
-\rhead{}
-
-	% % % % % % % % % % % % % % % % % %
-
-\renewcommand{\headrulewidth}{0.4pt}
 
 \makeatletter
 
 \begin{document}
 
-\input{title.tex}
+\input{title}
 
 \vspace{3cm}
 
@@ -57,11 +52,36 @@ We developed a practical solution to the GPE problem based on a random simulatio
 
 \subsection*{Outline}
 
-The outline of this report is structured as follows. Section 2 describes the problem of GPE while Section 3 explains details about the solution we propose, the problems we faced and the strategies we adopted to overcome them. Section 4 shows some experimental evaluation of our implementation. The last section states the conclusion of the work.
+The outline of this report is structured as follows. Section 2 describes the problem of GPE while Section 3 explains details about the solution we propose, the problems we faced and the strategies we adopted to overcome them. In Section 4 we will show some experimental evaluations of our implementation. The last section states the conclusion of our work and ideas on how we could improve our solution with techniques based on high-level operators that run in parallel.
 
 \section{The Problem}
 
 \section{The Solution}
+
+
+At the end we decided to allow users to run a simulation of a distributed computation. Indeed, each execution of our implementation runs a simulation.
+
+This section  gives readers all the competences to understand our proposed solution.
+
+In this section we do not go deep into the implementation details, instead we will focus on the logics behind our strategies.
+
+\subsection{Initialization}
+
+Each simulation starts with a
+
+\subsection{The simulation}
+
+\input{events_history}
+
+Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud voluptate veniam commodo id do officia cillum voluptate fugiat cillum. In incididunt proident qui id velit eiusmod aliquip aliqua nulla officia ut. Dolore aute est aliqua qui do eu sunt in est ad aliquip nulla anim deserunt. Ut sunt voluptate consectetur magna ex minim ut magna cillum aliquip elit voluptate ex excepteur eiusmod occaecat.
+
+\input{simulation_example}
+
+Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup.
+
+\input{worst_case_scenario}
+
+Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup
 
 \section{Evaluation}
 

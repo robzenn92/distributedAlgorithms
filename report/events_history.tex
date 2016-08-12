@@ -1,31 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Welcome to Overleaf --- just edit your LaTeX on the left,
-% and we'll compile it for you on the right. If you give
-% someone the link to this page, they can edit at the same
-% time. See the help menu above for more info. Enjoy!
-%
-% Note: you can export the pdf to see the result at full
-% resolution.
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass{article}
-
-\usepackage{tikz}
-\usepackage{amsmath}
-\usetikzlibrary{arrows}
-\usepackage{verbatim}
-
-\begin{document}
 \pagestyle{empty}
-
-% For every picture that defines or uses external nodes, you'll have to
-% apply the 'remember picture' style. To avoid some typing, we'll apply
-% the style to all pictures.
 \tikzstyle{every picture}+=[remember picture]
-
-% By default all math in TikZ nodes are set in inline mode. Change this to
-% displaystyle so that we don't get small fractions.
 \everymath{\displaystyle}
 
 \begin{figure}[!ht]
@@ -34,12 +8,12 @@
 % adjust the baseline of the nodes to get proper alignment with the rest of
 % the equation.
 \hspace{0.5cm} Events history: \hspace{0.2cm}
-\(\big[ \thinspace
+\([ \thinspace
 \tikz\node [fill=red!20,draw,circle] (n1) {}; \thinspace
 \tikz\node [fill=green!20,draw,circle] (n2){}; \thinspace
 \tikz\node [fill=blue!20,draw,circle] (n3) {}; \thinspace
 \tikz\node [fill=black!20,draw,circle] (n4){}; \thinspace
-\big]
+]
 \vspace{1cm}
 \)
 
@@ -49,19 +23,19 @@
 	\node[fill=red!20,draw,circle] (e0){};
 }
 };
-\draw[-] (2.15,0) node[below=2mm]{$e_0$} -- (4,0) node{\tikz[baseline]{
+\draw[-] (2.2,0) node[below=2mm]{$e_0$} -- (4,0) node{\tikz[baseline]{
 	\node[fill=green!20,draw,circle] (e1){};
 }
 };
-\draw[-] (4.15,0) node[below=2mm]{$e_1$} -- (5,0) node{\tikz[baseline]{
+\draw[-] (4.2,0) node[below=2mm]{$e_1$} -- (5,0) node{\tikz[baseline]{
 	\node[fill=blue!20,draw,circle] (e2){};
 }
 };
-\draw[-] (5.15,0) node[below=2mm]{$e_2$} -- (6.5,0) node{\tikz[baseline]{
+\draw[-] (5.2,0) node[below=2mm]{$e_2$} -- (6.5,0) node{\tikz[baseline]{
 	\node[fill=black!20,draw,circle] (e3){};
 }
 };
-\draw[->] (6.65,0) node[below=2mm]{$e_3$} -- (8,0) node[below=1mm]{End};
+\draw[->] (6.7,0) node[below=2mm]{$e_3$} -- (8,0) node[below=1mm]{End};
 
 \end{tikzpicture}
 
@@ -74,9 +48,5 @@
         \path[->] (n4) edge [out=-70, in=120] (e3);
 \end{tikzpicture}
 
-  \caption{How each simulation is scheduled}
+  \caption{The sequence of events stored in the peer array's  and scheduled in the time space diagram.}
 \end{figure}
-
-
-
-\end{document}
