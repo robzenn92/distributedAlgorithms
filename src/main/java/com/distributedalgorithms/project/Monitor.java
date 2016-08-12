@@ -16,7 +16,6 @@ import com.distributedalgorithms.options.Options;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.w3c.dom.events.EventTarget;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,7 +105,7 @@ class Monitor extends UntypedActor {
         Vector<ProcessVertex> ris = new Vector<ProcessVertex>();
         for (ProcessVertex pv:lattice.vertexSet()) {
             ris.add(pv);
-        };
+        }
         Collections.sort(ris);
 
 
@@ -161,7 +160,7 @@ class Monitor extends UntypedActor {
             file = new File(Options.LATTICE_OUTPUT_DOT_FILE_PATH);
             fop = new FileOutputStream(file);
 
-            // if file doesnt exists, then create it
+            // if file doesn't exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
             }

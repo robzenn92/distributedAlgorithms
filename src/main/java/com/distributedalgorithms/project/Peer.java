@@ -163,6 +163,12 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                 nextAction += nearFuture;
             }
 
+            // If the next action is scheduled after the end of the simulation,
+            // exit from the loop and send the events history to the monitor.
+            if (nextAction >= (endTime - startTime)) {
+                break;
+            }
+
             FiniteDuration future = FiniteDuration.create(nearFuture, Options.DELTA_TIME_UNIT);
 
             // I schedule what to do (send message or execute internal event) in the next future.
@@ -219,6 +225,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             );
         }
 
+        // After the computation I will send my event history to the monitor
         getContext().system().scheduler().scheduleOnce(Duration.create(nextAction, Options.PRECISION_TIME_UNIT),
                 monitor, new EndMessage(id, events), getContext().dispatcher(), getSelf());
     }
