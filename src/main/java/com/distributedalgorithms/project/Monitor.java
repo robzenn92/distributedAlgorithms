@@ -132,12 +132,12 @@ class Monitor extends UntypedActor {
                 "splines=false\n" +
                 "\n" +
                 "// the 1o layer\n" +
-                "00 [label = \"00\"];\n" ;
+                "0 [label = \"0-0\"];\n" ;
 
 
         for (int i = 1; i < ris.size(); i++) {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
-            level.set(somma, level.get(somma)+ ris.get(i).toString() + " [label = \""+ ris.get(i).toString() +"\"];\n");
+            level.set(somma, level.get(somma)+ ris.get(i).toInt() + " [label = \""+ ris.get(i).toString() +"\"];\n");
         }
 
         System.out.print(level.get(0));
@@ -149,7 +149,7 @@ class Monitor extends UntypedActor {
         for (int i = 0; i < ris.size(); i++) {
             ProcessVertex tmp = ris.get(i);
             if(tmp.hasParent()) {
-                content+=tmp.toString() + " -> " + tmp.getParentsString()+"\n";
+                content+=tmp.toInt() + " -> " + tmp.getParentsString()+"\n";
             }
         }
         content+="}";

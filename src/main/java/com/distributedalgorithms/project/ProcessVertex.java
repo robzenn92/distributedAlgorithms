@@ -41,14 +41,18 @@ class ProcessVertex implements Comparable<ProcessVertex>{
     public String getParentsString(){
         String ris="{";
         for (ProcessVertex pv:this.parent) {
-            ris+=pv.toString()+",";
+            ris+=pv.toInt()+",";
         }
         return ris.substring(0,ris.length()-1)+"}";
     }
 
     @Override
     public String toString() {
-        return this.peer0+this.peer1;
+        return this.peer0+"-"+this.peer1;
+    }
+
+    public int toInt() {
+        return Integer.parseInt(this.peer0+this.peer1);
     }
 
     @Override
@@ -68,6 +72,6 @@ class ProcessVertex implements Comparable<ProcessVertex>{
     }
 
     public int compareTo(ProcessVertex pv) {
-        return Integer.parseInt(this.toString()) - Integer.parseInt(pv.toString());
+        return this.toInt()-pv.toInt();
     }
 }
