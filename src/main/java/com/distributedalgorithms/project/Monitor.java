@@ -129,20 +129,13 @@ class Monitor extends UntypedActor {
                 "// set edge attribute\n" +
                 "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
                 "splines=false\n" +
-                "\n" +
-                "// the 1o layer\n" +
-                "0 [label = \"";
-        if (Options.SHOW_VARIABLE){
-            content+=l0.get(0).getVariable() + "-" + l1.get(0).getVariable()+"\"];\n";
-        }else{
-            content+=ris.get(0).toString() +"\"];\n";
-        }
+                "\n";
 
 
         String color="";
 
 
-        for (int i = 1; i < ris.size(); i++) {
+        for (int i = 0; i < ris.size(); i++) {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
             int x = l0.get(Integer.parseInt(ris.get(i).getFirst())).getVariable(); //varible peer0
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
@@ -159,7 +152,7 @@ class Monitor extends UntypedActor {
         }
 
         System.out.print(level.get(0));
-        for (int i = 1; i < level.size(); i++) {
+        for (int i = 0; i < level.size(); i++) {
             content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
         }
 
