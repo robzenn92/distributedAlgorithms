@@ -4,6 +4,7 @@
 % \usepackage{amsmath, amssymb}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
+\usepackage{url}
 
 % \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
@@ -13,13 +14,9 @@
 \chead{\bfseries Distributed Algorithms' Report}
 \rhead{}
 
-\lfoot{Zen Roberto \& Bof Michele}
-
 	% % % % % % % % % % % % % % % % % %
 
-\rfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
 
 \makeatletter
 
@@ -29,22 +26,48 @@
 
 \vspace{3cm}
 
+\section{Introduction}
+
+Aliqua eu exercitation mollit incididunt sunt labore in. Ut et Lorem non irure excepteur ad do laboris magna nostrud nostrud id minim eiusmod officia dolor. Pariatur sunt culpa ex do incididunt ad consequat officia cillum ex laboris. Occaecat occaecat labore sint reprehenderit aute pariatur sunt deserunt commodo pariatur in esse. Labore veniam nulla nisi esse sint aute pariatur ut commodo ipsum proident. Dolore quis quis quis commodo ad cupidatat elit in reprehenderit anim reprehenderit magna deserunt qui dolor officia. Eiusmod quis ad commodo laborum proident enim proident duis ad qui officia.
+
 \subsection*{Motivation}
+
+The reasons which have motivated our group to conduct a study on this topic are the following:
+
+\begin{enumerate}
+\item \textbf{Reason 1}. Enim aute ex ullamco eiusmod eu sit ullamco reprehenderit esse anim sint amet esse..
+\item \textbf{Id cillum exercitation adipisicing incididunt commodo quis tempor labore.}. Id cillum exercitation adipisicing incididunt commodo quis tempor labore..
+\item \textbf{Id cillum exercitation adipisicing incididunt commodo quis tempor labore.}. Id cillum exercitation adipisicing incididunt commodo quis tempor labore.
+\end{enumerate}
 
 \subsection*{Goals}
 
+The objectives which we have set ourselves are the following:
+\begin{enumerate}
+\item \textbf{Simulate a distributed computation}. Structure the project in such a way that an user can define how the simulation has to be executed and and how long it has to last. Moreover how many peers run over it and configura the probability of executing and internal event rather than a message exchange.
+
+\item \textbf{Id cillum exercitation adipisicing incididunt commodo quis tempor labore.}. Id cillum exercitation adipisicing incididunt commodo quis tempor labore..
+\item \textbf{Id cillum exercitation adipisicing incididunt commodo quis tempor labore.}. Id cillum exercitation adipisicing incididunt commodo quis tempor labore.
+\end{enumerate}
+
+
 \subsection*{Results}
+
+We developed a practical solution to the GPE problem based on a random simulation of distrubuted computations. The project has been develop in Java using JDK version's $1.7$ in combination with the Akka framework which allowed us to build an highly concurrent, distributed, and resilient message-driven application\footnote{\url{http://akka.io}}. We started implementing the behaviour of the peers and then we defined the message exchange between them. In particolar, we adopted a simple strategy for structure messages in a way that they were able to transport all the information needed at the very end of the simulation. To conclude, we defined the behaviour of the monitor such that it was able to collect all the messages exchanged between the peers and evaluate a given predicate over them building consistend global states stored in a lattice of events.
+
 
 \subsection*{Outline}
 
-\subsection*{The Problem}
+The outline of this report is structured as follows: Section
 
-\subsection*{The Solution}
+\section{The Problem}
 
-\subsection*{Evaluation}
+\section{The Solution}
 
-\subsection*{Conclusion}
+\section{Evaluation}
 
-\subsection*{References}
+\section{Conclusion}
+
+\section{References}
 
 \end{document}
