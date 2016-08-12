@@ -100,7 +100,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             // Update my VectorClock based on the previous one and the last VectorClock
             // of the peer which sent me this Message.
             VectorClock current = new VectorClock(id, last, ((Message) message).getVectorClock());
-            modifyVar(id);
+            modifyVar();
 
             // Raise a new local event with the current VectorClock, and add it to my history.
             Event e = new Event(id, current, this.variable);
@@ -119,21 +119,19 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
      * Modifies the parameter value with a new random value between 0 and Options.MAX_INT based on the probability
      * defined in Options.PROB_CHANGE_VARIABLE.
      *
-     * @param value the previous value of the peer's variable.
-     * @return depending on the given probability it returns the peer's variable new value or the old one.
+     *  depending on the given probability modify the peer's variable new value or the old one.
      */
-    private int modifyVar(int value) {
+    private void modifyVar() {
 
         // Get random real number between 0 and 1.
         // This will be the probability we will use to decide if the event
         // modify the variable of the peer or not.
         Random rand = new Random();
         float prob = rand.nextFloat();
-        if (prob > Options.PROB_CHANGE_VARIABLE){
+        if (prob < Options.PROB_CHANGE_VARIABLE){
             rand = new Random();
-            value = rand.nextInt(Options.MAX_INT);
+            this.variable = rand.nextInt(Options.MAX_INT);
         }
-        return value;
     }
 
     /**
@@ -188,7 +186,8 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                                 // Whatever choice I made, a new event is executed and it VectorClock has to be updated.
                                 VectorClock last = events.get(events.size() - 1).getVectorClock();
                                 VectorClock current = new VectorClock(id, last);
-                                Event e = new Event(id, current, 1);
+                                modifyVar();
+                                Event e = new Event(id, current, variable);
 
                                 // As result, we have chosen to execute an internal event.
                                 if (resulting_prob < Options.PROB_INTERNAL_EVENT) {

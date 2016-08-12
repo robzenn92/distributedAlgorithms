@@ -36,11 +36,23 @@ public final class Options {
     public static final float PROB_INTERNAL_EVENT = 0.5f;
 
 
-
+    /**
+     * The probability that a variable of the peer change or not.
+     *
+     */
     public static final float PROB_CHANGE_VARIABLE = 0.5f;
     public static final int MAX_INT = 10;
 
+    /**
+     * For the choice of labels of latex vertices
+     * If false, it shows index of the events
+     * If true, it show the variable of the peer at that the moment
+     *
+     */
+    public static final boolean SHOW_VARIABLE = true;
+
     public static final String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
+    public static final String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/latticeWithVar.dot";
     /**
      * Simulation time options
      * DO NOT CHANGE FROM HERE

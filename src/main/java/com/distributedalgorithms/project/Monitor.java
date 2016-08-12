@@ -77,7 +77,7 @@ class Monitor extends UntypedActor {
             }
 
             System.out.println(lattice.toString());
-            writeLatticeOnFile(lattice);
+            writeLatticeOnFile(lattice,l0,l1);
         }
     }
 
@@ -101,16 +101,16 @@ class Monitor extends UntypedActor {
         }
     }
 
-    private void writeLatticeOnFile(DirectedGraph<ProcessVertex, DefaultEdge> lattice) {
+
+    private void writeLatticeOnFile(DirectedGraph<ProcessVertex, DefaultEdge> lattice, ArrayList<Event> l0, ArrayList<Event> l1) {
+
+
         Vector<ProcessVertex> ris = new Vector<ProcessVertex>();
         for (ProcessVertex pv:lattice.vertexSet()) {
             ris.add(pv);
-        }
+        };
         Collections.sort(ris);
 
-
-        FileOutputStream fop =  null;
-        File file;
 
         int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
         Vector<String> level = new Vector<String>();    //vettore contenente i vertici del lattice divisi in livelli
@@ -131,12 +131,31 @@ class Monitor extends UntypedActor {
                 "splines=false\n" +
                 "\n" +
                 "// the 1o layer\n" +
-                "0 [label = \"0-0\"];\n" ;
+                "0 [label = \"";
+        if (Options.SHOW_VARIABLE){
+            content+=l0.get(0).getVariable() + "-" + l1.get(0).getVariable()+"\"];\n";
+        }else{
+            content+=ris.get(0).toString() +"\"];\n";
+        }
+
+
+        String color="";
 
 
         for (int i = 1; i < ris.size(); i++) {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
-            level.set(somma, level.get(somma)+ ris.get(i).toInt() + " [label = \""+ ris.get(i).toString() +"\"];\n");
+            int x = l0.get(Integer.parseInt(ris.get(i).getFirst())).getVariable(); //varible peer0
+            int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
+            if (x<y){
+                color+=ris.get(i).toInt()+",";
+            }
+            String last="";
+            if (Options.SHOW_VARIABLE){
+                last= x + "-" + y +"\"];\n";
+            }else{
+                last=ris.get(i).toString() +"\"];\n";
+            }
+            level.set(somma, level.get(somma)+ ris.get(i).toInt() + " [label = \""+last);
         }
 
         System.out.print(level.get(0));
@@ -151,16 +170,33 @@ class Monitor extends UntypedActor {
                 content+=tmp.toInt() + " -> " + tmp.getParentsString()+"\n";
             }
         }
+
+        String content_with_color= content;
+        if (color.length()>1){
+            content_with_color +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
+        }
+        content_with_color+="}";
         content+="}";
 
 
+        writeonFile(content,Options.LATTICE_OUTPUT_DOT_FILE_PATH);
+
+        writeonFile(content_with_color,Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
+
+
+    }
+
+
+    public void writeonFile(String content, String path){
+        FileOutputStream fop =  null;
+        File file;
 
         try {
 
-            file = new File(Options.LATTICE_OUTPUT_DOT_FILE_PATH);
+            file = new File(path);
             fop = new FileOutputStream(file);
 
-            // if file doesn't exists, then create it
+            // if file doesnt exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -185,5 +221,6 @@ class Monitor extends UntypedActor {
                 e.printStackTrace();
             }
         }
+
     }
 }
