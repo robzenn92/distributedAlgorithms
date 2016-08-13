@@ -6,6 +6,9 @@
 \usepackage{fancyhdr}
 \usepackage{url}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 \usepackage{tikz}
 \usepackage{amsmath}
 \usetikzlibrary{arrows}
@@ -75,11 +78,25 @@ Each simulation starts with a
 
 Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud voluptate veniam commodo id do officia cillum voluptate fugiat cillum. In incididunt proident qui id velit eiusmod aliquip aliqua nulla officia ut. Dolore aute est aliqua qui do eu sunt in est ad aliquip nulla anim deserunt. Ut sunt voluptate consectetur magna ex minim ut magna cillum aliquip elit voluptate ex excepteur eiusmod occaecat.
 
-\input{simulation_example}
+
+\pagestyle{empty}
+\begin{figure}
+	\centering
+	\begin{minipage}{.5\textwidth}
+	  \scalebox{.8}{\input{simulation_example}}
+	\end{minipage}%
+	\begin{minipage}{.5\textwidth}
+	  \scalebox{.8}{\input{simulation_example_vc}}
+	\end{minipage}
+\end{figure}
 
 Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup.
 
 \input{worst_case_scenario}
+
+Mollit consequat ut ut sit labore quis fugiat sunt Lorem velit sint nisi.
+
+\input{worst_case_scenario_solved}
 
 Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup
 
