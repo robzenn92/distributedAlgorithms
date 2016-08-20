@@ -45,7 +45,7 @@ public class Simulator {
             ActorSelection selection = system.actorSelection("/user/*");
 
             // Send to everybody the first StartMessage.
-            // This is used in order to tell everybody to run the simulation and let them know about its duration.
+            // This is used in order to tell everybody to initialize the simulation and let them know about its duration.
             // For example if you want to run a simulation that last 10 seconds you need to define the following configuration:
             // Options.SIMULATION_TIME = 10
             // Options.SIMULATION_TIME_UNIT = TimeUnit.SECONDS

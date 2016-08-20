@@ -23,6 +23,7 @@ import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 /**
@@ -41,6 +42,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
     // The list of all the peers I can communicate with (that's why neighbours) except me.
     private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
+    private boolean ignoreNextStartMessages = false;
 
     private int variable;
 
@@ -61,7 +63,11 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
     public void onReceive(Object message) {
 
-        if (message instanceof StartMessage) { // I received a StartMessage from the System.
+        // I received the first StartMessage either from the System or form another peer.
+        if (message instanceof StartMessage && !ignoreNextStartMessages) {
+
+            // I know that from now on I have to ignore the next StartMessages that have been sent from other peers.
+            ignoreNextStartMessages = true;
 
             // Catch when the start message is delivered.
             this.startTime = Options.getCurrentTime();
@@ -86,6 +92,12 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
             // Set up my VectorClock to the default value.
             events.add(new Event(id, start_value));
+
+            // Let the other peers the I am ready.
+            // Common knowledge: let the other know that I can start the simulation.
+            for(ActorRef neighbour:this.neighbours) {
+                neighbour.tell(message, getSelf());
+            }
 
             // Start a random execution:
             // Up to this point every peer in the system has executed one local event just to set its Vector clock.

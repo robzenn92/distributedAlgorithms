@@ -46,7 +46,7 @@ public final class Options {
     /**
      * For the choice of labels of latex vertices
      * If false, it shows index of the events
-     * If true, it show the variable of the peer at that the moment
+     * If true, it shows the variable of the peer at that the moment
      *
      */
     public static final boolean SHOW_VARIABLE = true;
