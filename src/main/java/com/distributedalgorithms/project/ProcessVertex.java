@@ -46,6 +46,10 @@ class ProcessVertex implements Comparable<ProcessVertex>{
         return ris.substring(0,ris.length()-1)+"}";
     }
 
+    public Vector<ProcessVertex> getParents(){
+        return this.parent;
+    }
+
     @Override
     public String toString() {
         return this.peer0+"-"+this.peer1;

@@ -139,7 +139,7 @@ class Monitor extends UntypedActor {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
             int x = l0.get(Integer.parseInt(ris.get(i).getFirst())).getVariable(); //varible peer0
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
-            if (x<y){
+            if (Options.getCondition(x,y)){
                 color+=ris.get(i).toInt()+",";
             }
             String last="";
@@ -151,7 +151,6 @@ class Monitor extends UntypedActor {
             level.set(somma, level.get(somma)+ ris.get(i).toInt() + " [label = \""+last);
         }
 
-        System.out.print(level.get(0));
         for (int i = 0; i < level.size(); i++) {
             content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
         }
@@ -176,6 +175,7 @@ class Monitor extends UntypedActor {
 
         writeonFile(content_with_color,Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
 
+        System.out.print(definitely(ris,l0,l1));
 
     }
 
@@ -216,4 +216,46 @@ class Monitor extends UntypedActor {
         }
 
     }
+    
+    public boolean definitely(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1){
+        Vector<ProcessVertex> last = new Vector<ProcessVertex>();
+        Vector<ProcessVertex> current = new Vector<ProcessVertex>();
+        ProcessVertex event00 = list.get(0);
+
+        int level_max = Integer.parseInt(list.lastElement().getFirst())+Integer.parseInt(list.lastElement().getSecond());
+        int x = l0.get(0).getVariable(); //varible peer0
+        int y = l1.get(0).getVariable(); //variable peer1
+        if (! Options.getCondition(x,y)){
+            last.add(event00);
+        }
+        int level = 0;
+        //System.out.println(last.get(0).toString());
+        while (!last.isEmpty()){
+            // inserisco in current tutti i vertici raggiungibili
+            for (ProcessVertex tmp: last) {
+                for (ProcessVertex parent: tmp.getParents()) {
+                    x = l0.get(Integer.parseInt(parent.getFirst())).getVariable(); //varible peer0
+                    y = l1.get(Integer.parseInt(parent.getSecond())).getVariable(); //variable peer1
+                    if (! Options.getCondition(x,y)){
+                        current.add(parent);
+                    }
+                }
+            }
+            if (current.isEmpty() & level==level_max){
+                return false;
+            }
+            level++;
+            last.removeAllElements();
+            for (ProcessVertex tmp: current) {
+                last.add(tmp);
+            }
+            current.removeAllElements();
+        }
+        return true;
+        
+    }
+
+
+
+    
 }
