@@ -1,0 +1,10 @@
+\begin{thebibliography}{1}
+
+\bibitem{Babaoglu}
+O.~Babao\u{g}lu and K.~Marzullo.
+\newblock Distributed systems (2nd ed.).
+\newblock chapter Consistent Global States of Distributed Systems: Fundamental
+  Concepts and Mechanisms, pages 55--96. ACM Press/Addison-Wesley Publishing
+  Co., New York, NY, USA, 1993.
+
+\end{thebibliography}

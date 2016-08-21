@@ -1,17 +1,15 @@
-\pagestyle{empty}
 \tikzstyle{every picture}+=[remember picture]
 \everymath{\displaystyle}
-\begin{figure}[!ht]
+\begin{figure}[ht!]
 \centering
 \scalebox{.8}{
-
 \begin{tikzpicture}
 
 % SYSTEM
 \draw[|-] (0,2) node[above=1mm]{System} -- (2,2) node{\tikz[baseline]{
 	\node[fill=green!20,draw,circle] (sm){};
 }};
-\draw[->] (2.2,2) node[above=2mm]{\small{StartMessage}} -- (8,2) {};
+\draw[->] (2.2,2) node[above=2mm]{StartMessage} -- (8,2) {};
 
 % PEER 0
 \draw[|-] (0,1) node[above=1mm]{Peer0} -- (6,1) node{\tikz[baseline]{
@@ -38,8 +36,8 @@
   \path[->] (sm) edge [out=-45, in=135] (f1);
   \path[->] (e1) edge [out=45, in=-135] (f0);
 \end{tikzpicture}
-
 }
 
-  \caption{An overcomed issue in our asyncronous simulation.}
+\caption{An overcomed issue in our asyncronous simulation.}
+\label{fig:worst_case}
 \end{figure}
