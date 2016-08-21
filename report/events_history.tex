@@ -1,9 +1,8 @@
-\pagestyle{empty}
 \tikzstyle{every picture}+=[remember picture]
 \everymath{\displaystyle}
 \begin{figure}[!ht]
 
-\hspace{0.5cm} Events history:
+\hspace{0.5cm} Events:
 \([ \thinspace
 \tikz\node [fill=red!20,draw,circle] (n1) {}; \thinspace
 \tikz\node [fill=green!20,draw,circle] (n2){}; \thinspace
@@ -15,7 +14,7 @@
 
 \centering
 \begin{tikzpicture}
-\draw[|-] (1,0) node[below=1mm]{Peer0} -- (2,0) node{\tikz[baseline]{
+\draw[|-] (1,0) node[below=1mm]{Peer} -- (2,0) node{\tikz[baseline]{
 	\node[fill=red!20,draw,circle] (e0){};
 }};
 \draw[-] (2.2,0) node[below=2mm]{$e^0_0$} -- (3,0) node{\tikz[baseline]{
@@ -34,8 +33,9 @@
         \path[->] (n1) edge [out=-90, in=120] (e0);
         \path[->] (n2) edge [out=-90, in=120] (e1);
         \path[->] (n3) edge [out=-70, in=135] (e2);
-        \path[->] (n4) edge [out=-70, in=135] (e3);
+        \path[->] (n4) edge [out=-60, in=135] (e3);
 \end{tikzpicture}
 
-  \caption{The sequence of events stored in the peer array's  and scheduled in the time space diagram.}
+  \caption{The sequence of events stored in the peer list's and scheduled in the time space diagram.}
+	\label{fig:events}
 \end{figure}

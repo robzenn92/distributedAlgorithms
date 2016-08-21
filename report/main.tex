@@ -27,23 +27,22 @@
 \section{Introduction}
 
 There is a large class of problems that consist in detecting wheter a particular state in a computation can be reached and need to be detected.
-All of those problems can be considered as subclasses of a well known abstract problem in distributed systems called \textit{Global Predicate Evaluation} (GPE). Its goal is to determine whether the global state of a distributed system satisfies some predicate $\Phi$. Those predicates might be related to the state of the system itself such as the possibility of detecting a deadlock or might be related to the state of the computation that is running among a set of processes. A point in common that all those subclasses have is that all those problems or properties can be encoded in terms of variables. GPE consists in evaluate a predicate over them, so compare the value that those variable have with respect to a given condition. There are two different strategies for solving GPE: one is based on a process called monitor, which actively queries the other processes in order to gather enough information to evaluate the predicate; the other strategy is also based on a monitor that passively observes the system and waits for notification of events sent by other processes whenever those events are related to the given predicate. Chose one or the other strategy depends on the underlying distributed system, the communication channels, and more.
+All of those problems can be considered as subclasses of a well known abstract problem in distributed systems called \textit{Global Predicate Evaluation} (GPE). Its goal is to determine whether the global state of a distributed system satisfies some predicate $\Phi$. Those predicates might be related to the state of the system itself such as identify wheter the sistem is deadlocked or might be related to the state of the computation that is running among a set of processes. A point that all those subclasses have in common is that all those properties can be encoded in terms of variables. GPE consists in evaluate a predicate over them, so compare the value that those variables have with respect to a given condition. There are two different strategies for solving GPE: one is based on a process called monitor, which actively queries the other processes in order to gather enough information to evaluate the predicate; the other strategy is based on a monitor that passively observes the system and waits for notifications sent by other processes whenever some events are related to the given predicate. Choose among one or the other strategy depends on the underlying distributed system, the communication channels, and other details.
 
-In order to inform the monitor about variable changes, processes need to send messages. These messages have to contain at least information related to the predicate that has to be evaluated. However, this is not the only information they need to carry on. Based on the synchrony or the asynchrony of the model one has to keep into consideration problems that may happen such as message ordering beetween a process and the monitor or between processes themselves, messages delays, faulty processes and so on. Hence, there is the need to consider time that can be globally accessed or local to each process. Different time measures for events are considered in solving the GPE: global clock, logical clocks and vector clocks.
+In order to inform the monitor about variable changes, processes have to send messages containing at least information related to the predicate which has to be evaluated. However, this is not the only information they need to carry on. Based on the synchrony or the asynchrony of the model one has to keep into consideration problems that may happen such as message ordering beetween a process and the monitor or between processes themselves. Moreover, messages can also be delayed or lost while processes may fails. Hence, one important component in the system to keep into consideration is the notion of time. Different time measures for events are considered in solving the GPE: global clock, logical clocks and vector clocks. In addition, time is used to collect only observation that are consistent, so observation that could have taken place during an execution.
 
-We developed a solution to the GPE problem based on a monitor that passively observes the distributed computation and receives messages from peers. Messages are labeled with a vector clock and contain information related to the predicate that the user wants to evaluate. A simulation is started and messages are exchanged randomly between peers which can also execute randomly local events. Once the simulation ends, the monitor collects the histories of events from all the peers, organize them into a \textit{partially ordered set} (poset) and build a lattice in such a way that the user can see it graphically. An analysis of the lattice is done considering that the unstable praticate can be analized in all the possible runs of the lattice (Definitely) or in at least one observation (Possibly).
+Consistency of observation is an important property that needs to be satisfied because predicate values are meaningful only when they are evaluated in consistent global states. The monitor has the core role of collect only the consistent global states of the running computation. Based on those states the monitor defines a lattice, an algebraic structure which consists of a partially ordered set (poset) organized in levels with an unique upper bound and an unique lower bound.
 
-
-\newpage
+We developed a solution to the GPE problem based on a monitor that passively observes the distributed computation. Our work consists in a simulation of a distributed system in which peers exchange messages and execute internal events while the monitor waits until the end of the simulation. Messages are labelled with a vector clock and contain information related to the predicate that the user wants to evaluate. Once the simulation ends, the monitor collects the histories of events from all the peers and organize them into a \textit{partially ordered set} (poset) based on the vector clocks recorded in the messages. Once the poset is created, the monitor translate the poset into a lattice that can be seen graphically by the user. Finally, an analysis of the lattice is conducted: the non-stable predicate given by the user is analized by visiting the lattice and evaluated among all its possible paths. In this phase we considered either predicates that hold in at least one global state (Definitely) and the ones that hold in all the consistent observations. To conclude, as result we show to the user two pictures that represent lattices of the observed computation with and without the analysis of the predicate.
 
 \subsection{Goals}
 
 The reasons which have motivated our group to conduct a study on this topic and the objectives which we have set ourselves are the following:
 \begin{enumerate}
-\item \textbf{Simulate a distributed computation}. Structure the project in such a way that an user can define how the simulation has to be executed and how long it has to last.
+\item \textbf{Simulate a distributed computation}. Structure the project in such a way that users can define how the simulation has to be executed and how long it has to last.
 \item \textbf{Develop an application as dinamic as possible}. Allow users to define how many peers will run over the system and their behaviour: establish the probability of executing an internal event rather than a message exchange.
 \item \textbf{Evaluate a Global Predicate among all the consistent global states}. Collect only consistent global states so the monitor can evaluate a given predicate over them.
-\item \textbf{Display a lattice of the computations}. Display the events executed during the simulation in a lattice so the user can see all the possible runs that could have been executed and the states satisfying the given predicate.
+\item \textbf{Display a lattice of the computations}. Display the events executed during the simulation in a lattice structure so users can see all the possible runs that could have been executed and the states satisfying the given predicate.
 \end{enumerate}
 
 \subsection{Results}
@@ -84,18 +83,27 @@ Although this is a simple protocol in which StartMessages and EndMessages estabi
 \emph{``Suppose that the actors in the system are two peers and the monitor. The actor system sends a StartMessage to all of them but due to the asynchrony of the underlying distributed system, one of the message sent to a peer is delayed. The peer who received the message first initialize its vector clock and start sending messages to the other peer who does not received yet the StartMessage. If the receipient peer received the message from the peer before the StartMessage sent by the monitor arrived, it cannot update its vector clock because it was not initialized before.''}
 \vspace{0.1cm}
 
+\noindent
+Figure \ref{fig:worst_case} shows the problem described in the above scenario. StartMessages are sent by the system actor but one of them arrives earlier than the other. Between the two events a message is exchanged and the update of a vector clock is not possible. We overcomed this problem with a simple solution based on the notion of \textit{common knowledge}: ``we want the other know that I am ready to start send messages''.
+
 \input{worst_case_scenario}
 
 \noindent
-Figure \ref{fig:worst_case} shows the problem described in the above scenario. StartMessages are sent by the system actor but one of them arrives earlier than the other. Between the two events a message is exchanged and the update of a vector clock is not possible. We overcomed this problem with a simple solution based on the notion of \textit{common knowledge}: ``we want the other know that I am ready to start send messages''.
+Figure \ref{fig:worst_case_solved} displays how we solved the problem related to Figure \ref{fig:worst_case}. The first time a StartMessage is received, each peer initializes its vector clock and sends a StartMessage to everybody else in order to share common knowledge.
 
 \input{worst_case_scenario_solved}
 
 \noindent
-Figure \ref{fig:worst_case_solved} displays how we solved the problem related to Figure \ref{fig:worst_case}. The first time a StartMessage is received, each peer initializes its vector clock and sends a StartMessage to everybody else in order to share common knowledge. This procedure is executed only once, the other StartMessages received are ignored. The assumptions made in Section 2 allow us to reason about the correctness of this protocol because message ordering is mantained per sender-receiver pair.
-
+This procedure is executed only once, the other StartMessages received are ignored. The assumptions made in Section 2 allow us to reason about the correctness of this protocol because message ordering is mantained per sender-receiver pair.
 
 \subsection{The simulation}
+
+Every time users execute our implementation, a simulation is run. The simulation starts once the initialization phase ends, in other words once each peer in the system has initilize its vector clocks and has sent a StartMessage to every other peer. During the simulation peers play the main role: they can communicate each other or the can decide to execute internal events. In fact, each peer has the possibility either to chose randomly a recipient for a message from the set of neighbours or execute an event based on given probabiliy defined by users. However, both the action are scheduled in the near future, meaning the peer decides based on the remaining time of the simulation when execute the event in the future. This is possible because the duration of the simultation is decided at priori by the user and the peers know it because it was stored in the \textit{StartMessage} previously received. In order to schedule events, each peer maintains a list of events. Each time the peer schedule a new event, it adds this event into the list. Figure \ref{fig:events} displays the history of events scheduled by a peer.
+
+\input{events_history}
+
+\noindent
+Each peer is independent from the others, and a possible execution of internal events in combination with messages exchanged between two peers can be seen in the Figure below. While the first picture on the left represent a sequence of events labbeled with the canonical enumeration, the picture on the right shows the same sequence with events labbeled with their vector clocks.
 
 \begin{figure}[ht]
 	\centering
@@ -107,21 +115,9 @@ Figure \ref{fig:worst_case_solved} displays how we solved the problem related to
 	\end{minipage}
 \end{figure}
 
-\input{events_history}
+\section{Lattice creation}
 
-Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud voluptate veniam commodo id do officia cillum voluptate fugiat cillum. In incididunt proident qui id velit eiusmod aliquip aliqua nulla officia ut. Dolore aute est aliqua qui do eu sunt in est ad aliquip nulla anim deserunt. Ut sunt voluptate consectetur magna ex minim ut magna cillum aliquip elit voluptate ex excepteur eiusmod occaecat.
-
-Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup.
-
-% \input{worst_case_scenario}
-
-Mollit consequat ut ut sit labore quis fugiat sunt Lorem velit sint nisi.
-
-% \input{worst_case_scenario_solved}
-
-Non laborum excepteur sint sunt aute esse aliquip. Velit irure ea culpa nulla id mollit laboris laboris adipisicing ipsum non do in id aute anim cupidatat. Veniam deserunt excepteur commodo eu duis nulla adipisicing anim amet adipisicing ex. Laborum Lorem do nulla sint qui voluptate sint esse in incididunt Lorem cillum voluptate tempor nisi. Mollit voluptate mollit eiusmod anim elit nostrud volup
-
-\section{Evaluation}
+\section{Predicate evaluation}
 
 \section{Conclusion}
 
