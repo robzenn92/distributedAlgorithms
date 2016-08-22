@@ -14,7 +14,7 @@ import com.distributedalgorithms.messages.StartMessage;
 import com.distributedalgorithms.options.Options;
 
 public class Simulator {
-w
+
     public static void main(String[] args) {
 
         // Check if all the value defined in the configuration file are allowed.
