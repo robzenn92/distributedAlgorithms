@@ -141,7 +141,7 @@ class Monitor extends UntypedActor {
         Vector<ProcessVertex> ris = new Vector<ProcessVertex>();
         for (ProcessVertex pv:lattice.vertexSet()) {
             ris.add(pv);
-        };
+        }
         Collections.sort(ris);
 
         int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
@@ -289,6 +289,5 @@ class Monitor extends UntypedActor {
             current.removeAllElements();
         }
         return true;
-        
     }
 }

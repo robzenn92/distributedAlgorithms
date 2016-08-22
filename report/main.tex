@@ -14,6 +14,9 @@
 \usetikzlibrary{arrows}
 \usepackage{verbatim}
 
+\definecolor{codegray}{gray}{0.9}
+\newcommand{\code}[1]{\colorbox{codegray}{\texttt{#1}}}
+
 \pagestyle{fancy}
 
 \makeatletter
@@ -31,7 +34,7 @@
 \section{Introduction}
 
 There is a large class of problems that consist in detecting wheter a particular state in a computation can be reached and need to be detected.
-All of those problems can be considered as subclasses of a well known abstract problem in distributed systems called \textit{Global Predicate Evaluation} (GPE). Its goal is to determine whether the global state of a distributed system satisfies some predicate $\Phi$. Those predicates might be related to the state of the system itself such as identify wheter the sistem is deadlocked or might be related to the state of the computation that is running among a set of processes. A point that all those subclasses have in common is that all those properties can be encoded in terms of variables. GPE consists in evaluate a predicate over them, so compare the value that those variables have with respect to a given condition. There are two different strategies for solving GPE: one is based on a process called monitor, which actively queries the other processes in order to gather enough information to evaluate the predicate; the other strategy is based on a monitor that passively observes the system and waits for notifications sent by other processes whenever some events are related to the given predicate. Choose among one or the other strategy depends on the underlying distributed system, the communication channels, and other details.
+All of those problems can be considered as subclasses of a well known abstract problem in distributed systems called \textit{Global Predicate Evaluation} (GPE). Its goal is to determine whether the global state of a distributed system satisfies some predicate $\Phi$. Those predicates might be related to the state of the system itself such as identify wheter the system is deadlocked or might be related to the state of the computation that is running among a set of processes. A point that all those subclasses have in common is that all those properties can be encoded in terms of variables. GPE consists in evaluate a predicate over them, so compare the value that those variables have with respect to a given condition. There are two different strategies for solving GPE: one is based on a process called monitor, which actively queries the other processes in order to gather enough information to evaluate the predicate; the other strategy is based on a monitor that passively observes the system and waits for notifications sent by other processes whenever some events are related to the given predicate. Choose among one or the other strategy depends on the underlying distributed system, the communication channels, and other details.
 
 In order to inform the monitor about variable changes, processes have to send messages containing at least information related to the predicate which has to be evaluated. However, this is not the only information they need to carry on. Based on the synchrony or the asynchrony of the model one has to keep into consideration problems that may happen such as message ordering beetween a process and the monitor or between processes themselves. Moreover, messages can also be delayed or lost while processes may fails. Hence, one important component in the system to keep into consideration is the notion of time. Different time measures for events are considered in solving the GPE: global clock, logical clocks and vector clocks. In addition, time is used to collect only observation that are consistent, so observation that could have taken place during an execution.
 
@@ -99,12 +102,12 @@ Figure \ref{fig:worst_case_solved} displays how we solved the problem related to
 
 \subsection{The simulation}
 
-Every time users execute our implementation, a simulation is run. The simulation starts once the initialization phase ends, in other words once each peer in the system has initialize its vector clocks and has sent a StartMessage to every other peer. During the simulation, peers play the main role: they can communicate each other by sending \textbf{Messages} or they can decide to execute internal events. In fact, each peer has the possibility either to chose randomly a recipient for a message from the set of neighbours or execute an event based on given probabiliy defined by users. However, both the action are scheduled in the near future, meaning the each peer decides when execute the event based on the remaining time of the simulation. This is possible because the duration of the simultation is decided at priori by the user and the peers know it because it was stored in the \textit{StartMessage} previously received. In order to schedule events, each peer maintains a list of events. Each time the peer schedule a new event, it adds this event into that list. Figure \ref{fig:events} displays the history of events scheduled by a peer.
+Every time users execute our implementation, a simulation is run. The simulation starts once the initialization phase ends, in other words once each peer in the system has initialized its vector clocks and has sent a StartMessage to every other peer. During the simulation, peers play the main role: they can communicate each other by sending \textbf{Messages} or they can decide to execute internal \textbf{Events}. In fact, each peer has the possibility either to chose randomly a recipient for a message from the set of neighbours or execute an event based on given probabiliy defined by users. However, both the action are scheduled in the near future, meaning that each peer decides when execute the event based on the remaining time of the simulation. This is possible because the duration of the simultation is decided at priori by the user and the peers know it because it was stored in the \textit{StartMessage} previously received. In order to schedule events, each peer maintains a list of events. Each time the peer schedule a new event, it adds this event into that list. Figure \ref{fig:events} displays the history of events scheduled by a peer.
 
 \input{events_history}
 
 \noindent
-Each peer is independent from the others, and a possible execution of internal events in combination with messages exchanged between two peers can be seen in the Figure below. While the first picture on the left represent a sequence of events labbeled with the canonical enumeration, the picture on the right shows the same sequence with events labbeled with their vector clocks.
+Each peer is independent from the others, and a possible execution of internal events in combination with messages exchanged between two peers can be seen in the Figure \ref{fig:time_space_diagrams}. While the first picture on the left represent a sequence of events labbeled with the canonical enumeration, the picture on the right shows the same sequence with events labbeled with their vector clocks.
 
 \begin{figure}[ht]
 	\centering
@@ -114,8 +117,23 @@ Each peer is independent from the others, and a possible execution of internal e
 	\begin{minipage}{.5\textwidth}
 	  \scalebox{.8}{\input{simulation_example_vc}}
 	\end{minipage}
+	\caption{Two time-space diagrams: the one on the left represents a sequence of events labelled using the canonical enumeration, the one on the right instead shows events labelled with their vector clocks.}
+	\label{fig:time_space_diagrams}
 \end{figure}
 
+\noindent
+The scheduling of events is made possible using the Akka API method: \\ \vspace{0.2cm}
+\centerline{\code{system().scheduler().scheduleOnce()}.}\\
+\noindent
+As written in the documentation\footnote{\url{http://doc.akka.io/docs/akka/2.4/java/scheduler.html}}, this method returns an instance of Scheduler which is unique per ActorSystem and is used internally for scheduling things to happen at specific points in time. As can be seen in Figure \ref{fig:scheduler}, the simulation is a loop that schedules actions in the future and ends when the next action is scheduled after the end of the simulation. At the very beginning of the simulation the variable \textit{nextAction} is set to zero, meaning that the simulation is just started. Then each time the loop is entered, a random time in the future is choosen between \textit{0} and \textit{DELTA\_TIME}. As soon as this period of time becomes shorter, the number of events executed during the simulation increases. Once a nextAction is scheduled in the future, the peer
+
+\begin{figure}[!ht]
+\includegraphics[width=\textwidth]{scheduler}
+\caption{The simulation code.}
+\label{fig:scheduler}
+\end{figure}
+
+\noindent
 As we stated, events come in two flavors and are described in the \textbf{Event} class. Each event has an istance of the \textbf{VectorClock} class, an identifier of the peer who executed the event and a variable value which changes along the simulation. Also this variable is related to a probability: users specify the probability that an event executes an internal event rather than a message exchange. Based on this and a randomize procedure each time the peer decides that an event in the future will happen, it choose among the two possibilities and repeat the precedure.
 
 \section{Lattice creation}
