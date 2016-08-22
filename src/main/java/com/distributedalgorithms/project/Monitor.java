@@ -133,13 +133,14 @@ class Monitor extends UntypedActor {
 
 
         String color="";
-
+        int possibly = 0;
 
         for (int i = 0; i < ris.size(); i++) {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
             int x = l0.get(Integer.parseInt(ris.get(i).getFirst())).getVariable(); //varible peer0
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
             if (Options.getCondition(x,y)){
+                possibly++;
                 color+=ris.get(i).toInt()+",";
             }
             String last="";
@@ -164,8 +165,9 @@ class Monitor extends UntypedActor {
         }
 
         String content_with_color= content;
-        if (color.length()>1){
+        if (color.length()>0){
             content_with_color +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
+            System.out.println("There are "+ possibly +" global states that satisfying the predicate");
         }
         content_with_color+="}";
         content+="}";
@@ -175,7 +177,11 @@ class Monitor extends UntypedActor {
 
         writeonFile(content_with_color,Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
 
-        System.out.print(definitely(ris,l0,l1));
+        if ( definitely(ris,l0,l1) ){
+            System.out.print("The distributed computation satisfies Definitely");
+        } else{
+            System.out.print("The distributed computation NOT satisfies Definitely");
+        }
 
     }
 
