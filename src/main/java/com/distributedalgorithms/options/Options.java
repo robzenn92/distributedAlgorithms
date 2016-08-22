@@ -11,7 +11,7 @@ import scala.Int;
 
 import java.util.concurrent.TimeUnit;
 
-public final class Options {
+public class Options {
 
     /**
      * The number of Peers in the System.
@@ -20,7 +20,7 @@ public final class Options {
      *
      * Peers will be named following the canonical enumeration starting from 0 to N = MAX_PEERS - 1: peer0, peer1, ...
      */
-    public static final int MAX_PEERS = 2;
+    private static int MAX_PEERS = 2;
 
     /**
      * The probability that an internal event happens during the lifecycle of a process.
@@ -35,15 +35,14 @@ public final class Options {
      * This means that during an execution of a process, the probability that an internal event happens is the
      * same as the one for a send event.
      */
-    public static final float PROB_INTERNAL_EVENT = 0.75f;
-
+    private static float PROB_INTERNAL_EVENT = 0.5f;
 
     /**
      * The probability that a variable of the peer change or not.
      *
      */
-    public static final float PROB_CHANGE_VARIABLE = 0.75f;
-    public static final int MAX_INT = 100;
+    private static float PROB_CHANGE_VARIABLE = 0.75f;
+    private static int MAX_INT = 100;
 
     /**
      * For the choice of labels of latex vertices
@@ -51,23 +50,25 @@ public final class Options {
      * If true, it shows the variable of the peer at that the moment
      *
      */
-    public static final boolean SHOW_VARIABLE = true;
+    private static boolean SHOW_VARIABLE = true;
 
-    public static final String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
-    public static final String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/latticeWithVar.dot";
+    private static String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
+    private static String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/latticeWithVar.dot";
+
     /**
      * Simulation time options
      * DO NOT CHANGE FROM HERE
      * ---------------------
      */
+    private static TimeUnit PRECISION_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final TimeUnit PRECISION_TIME_UNIT = TimeUnit.MILLISECONDS;
+    private static int DELTA_TIME = 1000;
+    private static TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-    public static final int DELTA_TIME = 1000;
-    public static final TimeUnit DELTA_TIME_UNIT = TimeUnit.MILLISECONDS;
+    private static int SIMULATION_TIME = 3;
+    private static TimeUnit SIMULATION_TIME_UNIT = TimeUnit.SECONDS;
 
-    public static final int SIMULATION_TIME = 3;
-    public static final TimeUnit SIMULATION_TIME_UNIT = TimeUnit.SECONDS;
+    private static String condition="x<y";
 
     /**
      * DO NOT CHANGE UP HERE
@@ -81,22 +82,22 @@ public final class Options {
      * @return a long value of the current time in the system
      */
     public static long getCurrentTime() {
-        return (Options.PRECISION_TIME_UNIT == TimeUnit.NANOSECONDS) ? System.nanoTime() : System.currentTimeMillis();
+        return (getPRECISION_TIME_UNIT() == TimeUnit.NANOSECONDS) ? System.nanoTime() : System.currentTimeMillis();
     }
 
     public static boolean checkConfigurationFile() {
 
         boolean check = true;
         // The number of peers in the system has to be a reasonable number
-        check = check && MAX_PEERS > 0 && MAX_PEERS < 100;
+        check = check && getMAX_PEERS() > 0 && getMAX_PEERS() < 100;
         // Probability has to be in between 0 and 1.0f
-        check = check && PROB_INTERNAL_EVENT >= 0 && PROB_INTERNAL_EVENT <= 1.0f;
+        check = check && getPROB_INTERNAL_EVENT() >= 0 && getPROB_INTERNAL_EVENT() <= 1.0f;
         // Probability has to be in between 0 and 1.0f
-        check = check && PROB_CHANGE_VARIABLE >= 0 && PROB_CHANGE_VARIABLE <= 1.0f;
+        check = check && getPROB_CHANGE_VARIABLE() >= 0 && getPROB_CHANGE_VARIABLE() <= 1.0f;
         // The value of the variables has to be a reasonable value
-        check = check && MAX_INT > 0 && MAX_INT < Int.MaxValue();
+        check = check && getMAX_INT() > 0 && getMAX_INT() < Int.MaxValue();
         // PRECISION_TIME_UNIT in milliseconds or nanoseconds, others are not allowed
-        check = check && (PRECISION_TIME_UNIT == TimeUnit.NANOSECONDS || PRECISION_TIME_UNIT == TimeUnit.MILLISECONDS);
+        check = check && (getPRECISION_TIME_UNIT() == TimeUnit.NANOSECONDS || getPRECISION_TIME_UNIT() == TimeUnit.MILLISECONDS);
         return check;
     }
 
@@ -105,4 +106,116 @@ public final class Options {
         else return false;
     }
 
+
+    public static int getMAX_PEERS() {
+        return MAX_PEERS;
+    }
+
+    public static void setMAX_PEERS(int MAX_PEERS) {
+        Options.MAX_PEERS = MAX_PEERS;
+    }
+
+
+    public static float getPROB_INTERNAL_EVENT() {
+        return PROB_INTERNAL_EVENT;
+    }
+
+    public static void setPROB_INTERNAL_EVENT(float PROB_INTERNAL_EVENT) {
+        Options.PROB_INTERNAL_EVENT = PROB_INTERNAL_EVENT;
+    }
+
+
+    public static float getPROB_CHANGE_VARIABLE() {
+        return PROB_CHANGE_VARIABLE;
+    }
+
+    public static void setPROB_CHANGE_VARIABLE(float PROB_CHANGE_VARIABLE) {
+        Options.PROB_CHANGE_VARIABLE = PROB_CHANGE_VARIABLE;
+    }
+
+    public static int getMAX_INT() {
+        return MAX_INT;
+    }
+
+    public static void setMAX_INT(int MAX_INT) {
+        Options.MAX_INT = MAX_INT;
+    }
+
+
+    public static boolean isSHOW_VARIABLE() {
+        return isShowVariable();
+    }
+
+    public static void setSHOW_VARIABLE(boolean SHOW_VARIABLE) {
+        Options.setShowVariable(SHOW_VARIABLE);
+    }
+
+    public static String getLATTICE_OUTPUT_DOT_FILE_PATH() {
+        return LATTICE_OUTPUT_DOT_FILE_PATH;
+    }
+
+    public static void setLATTICE_OUTPUT_DOT_FILE_PATH(String LATTICE_OUTPUT_DOT_FILE_PATH) {
+        Options.LATTICE_OUTPUT_DOT_FILE_PATH = LATTICE_OUTPUT_DOT_FILE_PATH;
+    }
+
+    public static String getLATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH() {
+        return LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH;
+    }
+
+    public static void setLATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH(String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH) {
+        Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH;
+    }
+
+    public static TimeUnit getPRECISION_TIME_UNIT() {
+        return PRECISION_TIME_UNIT;
+    }
+
+    public static void setPRECISION_TIME_UNIT(TimeUnit PRECISION_TIME_UNIT) {
+        Options.PRECISION_TIME_UNIT = PRECISION_TIME_UNIT;
+    }
+
+    public static int getDELTA_TIME() {
+        return DELTA_TIME;
+    }
+
+    public static void setDELTA_TIME(int DELTA_TIME) {
+        Options.DELTA_TIME = DELTA_TIME;
+    }
+
+    public static TimeUnit getDELTA_TIME_UNIT() {
+        return DELTA_TIME_UNIT;
+    }
+
+    public static void setDELTA_TIME_UNIT(TimeUnit DELTA_TIME_UNIT) {
+        Options.DELTA_TIME_UNIT = DELTA_TIME_UNIT;
+    }
+
+    public static int getSIMULATION_TIME() {
+        return SIMULATION_TIME;
+    }
+
+    public static void setSIMULATION_TIME(int SIMULATION_TIME) {
+        Options.SIMULATION_TIME = SIMULATION_TIME;
+    }
+
+    public static TimeUnit getSIMULATION_TIME_UNIT() {
+        return SIMULATION_TIME_UNIT;
+    }
+
+    public static void setSIMULATION_TIME_UNIT(TimeUnit SIMULATION_TIME_UNIT) {
+        Options.SIMULATION_TIME_UNIT = SIMULATION_TIME_UNIT;
+    }
+
+    public static boolean isShowVariable() {
+        return SHOW_VARIABLE;
+    }
+
+    public static void setShowVariable(boolean showVariable) {
+        SHOW_VARIABLE = showVariable;
+    }
+
+
+    public static void setCondition(String condition) {
+        Options.condition = condition;
+    }
 }

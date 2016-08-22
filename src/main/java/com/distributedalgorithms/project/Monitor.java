@@ -16,6 +16,7 @@ import com.distributedalgorithms.options.Options;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import sun.jvm.hotspot.debugger.posix.elf.ELFSectionHeader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +40,7 @@ class Monitor extends UntypedActor {
 
     // A list of events histories, one for each peer
     // We will consider only if the number of peers in the actual system is equal to 2.
-    private ArrayList<Event> eventsList[] = new ArrayList[Options.MAX_PEERS];
+    private ArrayList<Event> eventsList[] = new ArrayList[Options.getMAX_PEERS()];
 
     public void onReceive(Object message) {
 
@@ -49,7 +50,7 @@ class Monitor extends UntypedActor {
             // Catch when the start message is delivered.
             // It is better and more precise (of course more expansive) if we measure the execution time in Nanoseconds.
             log.info("Start listening at " + Options.getCurrentTime());
-            log.info("I will receive from everybody an EndMessage in " + Options.SIMULATION_TIME + " " + Options.SIMULATION_TIME_UNIT + ".");
+            log.info("I will receive from everybody an EndMessage in " + Options.getSIMULATION_TIME() + " " + Options.getSIMULATION_TIME_UNIT() + ".");
         }
         else if (message instanceof EndMessage) {
 
@@ -57,14 +58,17 @@ class Monitor extends UntypedActor {
             endMessagesReceived++;
 
             // Check if EndMessages arrived from all the peers
-            if (endMessagesReceived == Options.MAX_PEERS) {
+            if (endMessagesReceived == Options.getMAX_PEERS()) {
 
                 log.info("I received EndMessages from all the peers.");
 
-                if(Options.MAX_PEERS == 2) {
+                if(Options.getMAX_PEERS() == 2) {
                     log.info("There are only 2 peers. I start creating the lattice. Then I will run the evaluation.");
                     buildLattice(0, 0, eventsList[0], eventsList[1]);
+                }else{
+                    System.out.println("END of SIMULATION");
                 }
+
             }
         }
         else {
@@ -175,7 +179,7 @@ class Monitor extends UntypedActor {
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
 
             String last="";
-            if (Options.SHOW_VARIABLE){
+            if (Options.isSHOW_VARIABLE()){
                 last= x + "-" + y +"\"];\n";
             }else{
                 last=ris.get(i).toString() +"\"];\n";
@@ -198,19 +202,33 @@ class Monitor extends UntypedActor {
 
 
         content+="}";
-        writeonFile(content,Options.LATTICE_OUTPUT_DOT_FILE_PATH);
+        writeonFile(content,Options.getLATTICE_OUTPUT_DOT_FILE_PATH());
 
+        do {
+            if (!possibly(ris, l0, l1, content.substring(0, content.length() - 1))) {
+                System.out.println("There are NOT global states that satisfying the predicate");
+            }
 
-        if ( ! possibly(ris, l0, l1, content.substring(0,content.length()-1))){
-            System.out.print("There are NOT global states that satisfying the predicate");
-        }
-
-        if ( definitely(ris,l0,l1) ){
-            System.out.print("The distributed computation satisfies Definitely");
-        } else{
-            System.out.print("The distributed computation NOT satisfies Definitely");
-        }
-
+            if (definitely(ris, l0, l1)) {
+                System.out.println("The distributed computation satisfies Definitely");
+            } else {
+                System.out.println("The distributed computation NOT satisfies Definitely");
+            }
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Would you change the predicate? (true or false)");
+            while (!sc.hasNextBoolean()) {
+                System.out.println("Insert an integer please!");
+                sc.nextLine();
+            }
+            if(sc.nextBoolean()){
+                sc.nextLine();
+                System.out.println("Insert the NEW predicate:");
+                Options.setCondition(sc.nextLine());
+            }else{
+                break;
+            }
+        }while (true);
+        System.out.println("END");
     }
 
 
@@ -279,7 +297,7 @@ class Monitor extends UntypedActor {
             content +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
             System.out.println("There are "+ possibly +" global states that satisfying the predicate");
             content+="}";
-            writeonFile(content, Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
+            writeonFile(content, Options.getLATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH());
             return true;
         }else{
             return false;
@@ -321,7 +339,7 @@ class Monitor extends UntypedActor {
                 }
             }
             // when arrived at the bottom of lattice and if the vector current is empty then the definitely is false
-            if (current.isEmpty() & level==level_max){
+            if (current.isEmpty() && level==level_max){
                 return false;
             }
             level++;
