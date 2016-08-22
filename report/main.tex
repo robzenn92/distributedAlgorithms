@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 \usepackage[english]{babel}
 
 % \usepackage{amsmath, amssymb}
@@ -20,10 +20,14 @@
 
 \begin{document}
 
+\pagenumbering{gobble}
 \input{title}
 
-\vspace{3cm}
-
+% \thispagestyle{empty}
+% \tableofcontents
+% \newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 \section{Introduction}
 
 There is a large class of problems that consist in detecting wheter a particular state in a computation can be reached and need to be detected.
@@ -32,8 +36,6 @@ All of those problems can be considered as subclasses of a well known abstract p
 In order to inform the monitor about variable changes, processes have to send messages containing at least information related to the predicate which has to be evaluated. However, this is not the only information they need to carry on. Based on the synchrony or the asynchrony of the model one has to keep into consideration problems that may happen such as message ordering beetween a process and the monitor or between processes themselves. Moreover, messages can also be delayed or lost while processes may fails. Hence, one important component in the system to keep into consideration is the notion of time. Different time measures for events are considered in solving the GPE: global clock, logical clocks and vector clocks. In addition, time is used to collect only observation that are consistent, so observation that could have taken place during an execution.
 
 Consistency of observation is an important property that needs to be satisfied because predicate values are meaningful only when they are evaluated in consistent global states. The monitor has the core role of collect only the consistent global states of the running computation. Based on those states the monitor defines a lattice, an algebraic structure which consists of a partially ordered set (poset) organized in levels with an unique upper bound and an unique lower bound.
-
-We developed a solution to the GPE problem based on a monitor that passively observes the distributed computation. Our work consists in a simulation of a distributed system in which peers exchange messages and execute internal events while the monitor waits until the end of the simulation. Messages are labelled with a vector clock and contain information related to the predicate that the user wants to evaluate. Once the simulation ends, the monitor collects the histories of events from all the peers and organize them into a \textit{partially ordered set} (poset) based on the vector clocks recorded in the messages. Once the poset is created, the monitor translate the poset into a lattice that can be seen graphically by the user. Finally, an analysis of the lattice is conducted: the non-stable predicate given by the user is analized by visiting the lattice and evaluated among all its possible paths. In this phase we considered either predicates that hold in at least one global state (Definitely) and the ones that hold in all the consistent observations. To conclude, as result we show to the user two pictures that represent lattices of the observed computation with and without the analysis of the predicate.
 
 \subsection{Goals}
 
@@ -47,7 +49,9 @@ The reasons which have motivated our group to conduct a study on this topic and 
 
 \subsection{Results}
 
-We developed a simple solution to the GPE problem based on a random simulation of distrubuted computations. The project has been develop in Java using JDK version's $1.7$ in combination with the Akka framework which allowed us to build an highly concurrent, distributed, and resilient message-driven application\footnote{\url{http://akka.io}}. We started implementing the behaviour of the peers and then we defined the message exchange between them. In particolar, we adopted a simple strategy for structure messages in a way that they were able to transport all the information needed at the very end of the simulation. To conclude, we defined the behaviour of the monitor such that it is able first to collect all the messages exchanged between the peers and second to evaluate a given predicate over them, taking into consideration only consistend global states stored in a lattice of events.
+We developed a simple solution to the GPE problem based on a monitor that passively observes the distributed computation. The project has been develop in Java using JDK version's $1.7$ in combination with the Akka framework which allowed us to build an highly concurrent, distributed, and resilient message-driven application\footnote{\url{http://akka.io}}. Our work consists in a simulation of a distributed system in which peers exchange messages and execute internal events while the monitor waits until the end of the simulation. Messages are labelled with a vector clock and contain information related to the predicate that the user wants to evaluate. In particolar, we adopted a simple strategy for structure messages in a way that they were able to transport all the information needed at the very end of the simulation.
+
+Once the simulation ends, the monitor collects the histories of events from all the peers and organize them into a \textit{partially ordered set} (poset) based on the vector clocks recorded in the messages. Once the poset is created, the monitor transform the poset into a lattice that can be seen graphically by the user. Finally, an analysis of the lattice is conducted: the non-stable predicate given by the user is analized by traversing the lattice (considered as a directed graph) and evaluated among all its possible paths. In this phase we considered either predicates that hold in at least one global state (Definitely) and the ones that hold in all the consistent observations. To conclude, as result we show to the user two pictures that represent lattices of the observed computation with and without the analysis of the predicate.
 
 \subsection{Outline}
 
@@ -55,7 +59,7 @@ The outline of this report is structured as follows. Section 2 describes the pro
 
 \section{The Solution}
 
-We developed an application using the Akka framework which emphasises the concept of \textit{actors} as entities that may make local decisions, execute events or send messages to other actors. Our solution is based on the fact that a user can specify the duration of the distributed computation and the behaviour of the actors in the system. In our implementatio, actors are are both peers and monitor who take place in the simulation and interact each other use purely message passing. An important note is that everything in Akka is asynchronous\footnote{\url{http://doc.akka.io/docs/akka/2.4/general/remoting.html}}.
+We developed an application using the Akka framework which emphasises the concept of \textit{actors} as entities that are independet one each other. In fact, in our project actors can make local decisions, execute events or send messages to other actors. Our solution is based on the fact that a user can specify the duration of the distributed computation and the behaviour of the actors in the system. In our implementation, actors are are both peers and monitor who partecipates in the simulation and interact each other use purely message passing. An important note is that everything in Akka is asynchronous\footnote{\url{http://doc.akka.io/docs/akka/2.4/general/remoting.html}}.
 
 Altough it is a very simple implementation for solving the GPE problem, different options on how to develop our project were considered. We started developing a real P2P system by running peers for a period of time equal to the one specified by the user. Once this period of time elapsed, the peers send all their history of events to the monitor which evaluates a given predicate on the global states built.
 
@@ -76,29 +80,26 @@ We decided to work under an asynchronous system, the weakest possible model for 
 
 \subsection{Initialization}
 
-Each simulation starts by executing the \textit{Simulator} class. Firstly, it acquires the configuration specified by the user such as the number of peers in the actual system, the duration of the simulation and more. Secondly, it creates an actor system which generates the peers and the monitor as its children, and then sends a \textit{StartMessage} to them in order to initialize the actors. When the monitor receives the \textit{StartMessage} it starts listening and waiting for \textit{EndMessages} sent by all the peers at the end of their simulation. On the other hand, once a peer received a \textit{StartMessage} it initializes its vector clock and it can start sending messages to its neighbours.
+Each simulation starts by executing the \textbf{Simulator} class. Firstly, it acquires the configuration specified by the user such as the number of peers in the actual system, the duration of the simulation and more. Secondly, it creates an actor system which generates the peers and the monitor as its children, and then sends a \textbf{StartMessage} to them in order to initialize the actors. When the monitor receives the \textit{StartMessage} it starts listening and waiting for \textbf{EndMessages} sent by all the peers at the end of their simulation. On the other hand, once a peer received a \textit{StartMessage} it initializes its vector clock and it can start sending messages to its neighbours.
 Although this is a simple protocol in which StartMessages and EndMessages estabilish respectively the start and the end of the simulation, it is not difficult to understand that this procedure may cause problems. In order to explain what may happen, let's describe it in a scenario.
 
 \vspace{0.2cm}
 \emph{``Suppose that the actors in the system are two peers and the monitor. The actor system sends a StartMessage to all of them but due to the asynchrony of the underlying distributed system, one of the message sent to a peer is delayed. The peer who received the message first initialize its vector clock and start sending messages to the other peer who does not received yet the StartMessage. If the receipient peer received the message from the peer before the StartMessage sent by the monitor arrived, it cannot update its vector clock because it was not initialized before.''}
-\vspace{0.1cm}
-
-\noindent
-Figure \ref{fig:worst_case} shows the problem described in the above scenario. StartMessages are sent by the system actor but one of them arrives earlier than the other. Between the two events a message is exchanged and the update of a vector clock is not possible. We overcomed this problem with a simple solution based on the notion of \textit{common knowledge}: ``we want the other know that I am ready to start send messages''.
+\vspace{0.2cm}
 
 \input{worst_case_scenario}
 
 \noindent
-Figure \ref{fig:worst_case_solved} displays how we solved the problem related to Figure \ref{fig:worst_case}. The first time a StartMessage is received, each peer initializes its vector clock and sends a StartMessage to everybody else in order to share common knowledge.
+Figure \ref{fig:worst_case} shows the problem described in the above scenario. StartMessages are sent by the system actor but one of them arrives earlier than the other. Between the two events a message is exchanged and the update of a vector clock is not possible. We overcomed this problem with a simple solution based on the notion of \textit{common knowledge}: ``we want the other know that I am ready to start the simulation''.
 
 \input{worst_case_scenario_solved}
 
 \noindent
-This procedure is executed only once, the other StartMessages received are ignored. The assumptions made in Section 2 allow us to reason about the correctness of this protocol because message ordering is mantained per sender-receiver pair.
+Figure \ref{fig:worst_case_solved} displays how we solved the problem related to Figure \ref{fig:worst_case}. The first time a StartMessage is received, each peer initializes its vector clock and sends another StartMessage to everybody else in order to share common knowledge. This procedure is executed only once, the other StartMessages received are ignored. The assumptions made in Section 2 allow us to reason about the correctness of this protocol because message ordering is mantained per sender-receiver pair.
 
 \subsection{The simulation}
 
-Every time users execute our implementation, a simulation is run. The simulation starts once the initialization phase ends, in other words once each peer in the system has initilize its vector clocks and has sent a StartMessage to every other peer. During the simulation peers play the main role: they can communicate each other or the can decide to execute internal events. In fact, each peer has the possibility either to chose randomly a recipient for a message from the set of neighbours or execute an event based on given probabiliy defined by users. However, both the action are scheduled in the near future, meaning the peer decides based on the remaining time of the simulation when execute the event in the future. This is possible because the duration of the simultation is decided at priori by the user and the peers know it because it was stored in the \textit{StartMessage} previously received. In order to schedule events, each peer maintains a list of events. Each time the peer schedule a new event, it adds this event into the list. Figure \ref{fig:events} displays the history of events scheduled by a peer.
+Every time users execute our implementation, a simulation is run. The simulation starts once the initialization phase ends, in other words once each peer in the system has initialize its vector clocks and has sent a StartMessage to every other peer. During the simulation, peers play the main role: they can communicate each other by sending \textbf{Messages} or they can decide to execute internal events. In fact, each peer has the possibility either to chose randomly a recipient for a message from the set of neighbours or execute an event based on given probabiliy defined by users. However, both the action are scheduled in the near future, meaning the each peer decides when execute the event based on the remaining time of the simulation. This is possible because the duration of the simultation is decided at priori by the user and the peers know it because it was stored in the \textit{StartMessage} previously received. In order to schedule events, each peer maintains a list of events. Each time the peer schedule a new event, it adds this event into that list. Figure \ref{fig:events} displays the history of events scheduled by a peer.
 
 \input{events_history}
 
@@ -114,6 +115,8 @@ Each peer is independent from the others, and a possible execution of internal e
 	  \scalebox{.8}{\input{simulation_example_vc}}
 	\end{minipage}
 \end{figure}
+
+As we stated, events come in two flavors and are described in the \textbf{Event} class. Each event has an istance of the \textbf{VectorClock} class, an identifier of the peer who executed the event and a variable value which changes along the simulation. Also this variable is related to a probability: users specify the probability that an event executes an internal event rather than a message exchange. Based on this and a randomize procedure each time the peer decides that an event in the future will happen, it choose among the two possibilities and repeat the precedure.
 
 \section{Lattice creation}
 

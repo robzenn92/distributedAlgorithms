@@ -22,14 +22,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Description of the class: Monitor
+ * This class contains methods for handle the monitor behaviour inside the network.
+ * Monitor receives a StartMessage from the actor system and the it will wait until the peers send EndMessages.
+ * Once the simulation is ended, an evaluation of the given non-stable predicate is performed.
+ * Graphical results will be given to the user.
+ */
 class Monitor extends UntypedActor {
 
+    // Count the number of EndMessages received by the peers
     private int endMessagesReceived = 0;
 
+    // A simple log instance.
     private LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
+    // A list of events histories, one for each peer
+    // We will consider only if the number of peers in the actual system is equal to 2.
     private ArrayList<Event> eventsList[] = new ArrayList[Options.MAX_PEERS];
-    private FileOutputStream fop;
 
     public void onReceive(Object message) {
 
@@ -49,8 +59,12 @@ class Monitor extends UntypedActor {
             // Check if EndMessages arrived from all the peers
             if (endMessagesReceived == Options.MAX_PEERS) {
 
-                System.out.println("\n\n" + eventsList[0].toString() + "\n\n" + eventsList[1].toString() + "\n\n");
-                buildLattice(0, 0, eventsList[0], eventsList[1]);
+                log.info("I received EndMessages from all the peers.");
+
+                if(Options.MAX_PEERS == 2) {
+                    log.info("There are only 2 peers. I start creating the lattice. Then I will run the evaluation.");
+                    buildLattice(0, 0, eventsList[0], eventsList[1]);
+                }
             }
         }
         else {
@@ -58,6 +72,15 @@ class Monitor extends UntypedActor {
         }
     }
 
+    /**
+     * Starts by the first event of each history and analyses whether these events are pairwise inconsistent.
+     * If so, nothing can be done, otherwise the lattice is built step by step incrementing one index of one history at time.
+     * Once the lattice is created, the structure is stored in a file with the .dot extension.
+     * @param index0 index of the first list of events
+     * @param index1 index of the second list of events
+     * @param l0 first list of events
+     * @param l1 second list of events
+     */
     private void buildLattice(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1) {
 
         DirectedGraph<ProcessVertex, DefaultEdge> lattice = new DefaultDirectedGraph<ProcessVertex, DefaultEdge>(DefaultEdge.class);
@@ -81,6 +104,16 @@ class Monitor extends UntypedActor {
         }
     }
 
+    /**
+     * Starts by the first event of each history and analyses whether these events are pairwise inconsistent.
+     * If so, nothing can be done, otherwise the lattice is built step by step incrementing one index of one history at time.
+     * @param index0 index of the first list of events
+     * @param index1 index of the second list of events
+     * @param l0 first list of events
+     * @param l1 second list of events
+     * @param lattice the lattice partially created up to previous recursive invocation.
+     * @param parent the ancestor of the current nodes in the lattice
+     */
     private void buildLatticeRec(int index0, int index1, ArrayList<Event> l0, ArrayList<Event> l1, DirectedGraph<ProcessVertex, DefaultEdge> lattice, ProcessVertex parent){
 
         if (index0 < l0.size() && index1 < l1.size()) {
@@ -111,19 +144,16 @@ class Monitor extends UntypedActor {
         };
         Collections.sort(ris);
 
-
         int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
         Vector<String> level = new Vector<String>();    //vettore contenente i vertici del lattice divisi in livelli
 
-
-
-        //inizializzo il vettore con stringhe vuote
+        // Initialize the level vector with empty strings
         for (int i = 0; i < somma; i++) {
             level.add("");
         }
 
-
-        //livello iniziale, indice 00
+        // Set the first level description
+        // Level 0-0
         String content= "digraph item_set {\n" +
                 "\n" +
                 "// set edge attribute\n" +
@@ -180,7 +210,8 @@ class Monitor extends UntypedActor {
     }
 
 
-    public void writeonFile(String content, String path){
+    public void writeonFile(String content, String path) {
+
         FileOutputStream fop =  null;
         File file;
 
@@ -189,12 +220,12 @@ class Monitor extends UntypedActor {
             file = new File(path);
             fop = new FileOutputStream(file);
 
-            // if file doesnt exists, then create it
+            // If file doesn't exist, then create it.
             if (!file.exists()) {
                 file.createNewFile();
             }
 
-            // get the content in bytes
+            // Get the content in bytes
             byte[] contentInBytes = content.getBytes();
 
             fop.write(contentInBytes);

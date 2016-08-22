@@ -7,6 +7,8 @@
 
 package com.distributedalgorithms.options;
 
+import scala.Int;
+
 import java.util.concurrent.TimeUnit;
 
 public final class Options {
@@ -83,20 +85,19 @@ public final class Options {
     }
 
     public static boolean checkConfigurationFile() {
-        return true;
 
-//          in peer startRandomSim
-//        if ( x > (long)Integer.MAX_VALUE ) {
-//            // x is too big to convert, throw an exception or something useful
-//        }
-//        else {
-//            y = (int)x;
-//        }
-
-        // Probability cannot be more than 1.0f but more then 0.0f.
-
+        boolean check = true;
+        // The number of peers in the system has to be a reasonable number
+        check = check && MAX_PEERS > 0 && MAX_PEERS < 100;
+        // Probability has to be in between 0 and 1.0f
+        check = check && PROB_INTERNAL_EVENT >= 0 && PROB_INTERNAL_EVENT <= 1.0f;
+        // Probability has to be in between 0 and 1.0f
+        check = check && PROB_CHANGE_VARIABLE >= 0 && PROB_CHANGE_VARIABLE <= 1.0f;
+        // The value of the variables has to be a reasonable value
+        check = check && MAX_INT > 0 && MAX_INT < Int.MaxValue();
         // PRECISION_TIME_UNIT in milliseconds or nanoseconds, others are not allowed
-
+        check = check && (PRECISION_TIME_UNIT == TimeUnit.NANOSECONDS || PRECISION_TIME_UNIT == TimeUnit.MILLISECONDS);
+        return check;
     }
 
     public static boolean getCondition(int x, int y){

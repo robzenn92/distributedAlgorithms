@@ -99,7 +99,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             }
 
             // Start a random execution:
-            // Up to this point every peer in the system has executed one local event just to set its Vector clock.
+            // Up to this point every peer in the system has executed the initialization: one local event just to set its Vector clock.
             // Now, I start sending asynchronous messages to random peers, till the simulation ends (currentTime = endTime).
             startRandomExecution();
 
