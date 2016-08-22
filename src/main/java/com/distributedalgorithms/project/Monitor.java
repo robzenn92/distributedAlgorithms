@@ -387,40 +387,31 @@ class Monitor extends UntypedActor {
 
 
     public boolean secondMenu(){
-        boolean exit=false;
         Scanner sc = new Scanner(System.in);
-        do {
-            System.out.println("What would you like to do?");
-            System.out.println("1 - Change the label of the lattice");
-            System.out.println("2 - Change the predicate to be evaluated");
-            System.out.println("3 - Recreate the lattice with new options");
-            System.out.println("0 - Exit");
+        System.out.println("What would you like to do?");
+        System.out.println("1 - Change the label of the lattice");
+        System.out.println("2 - Change the predicate to be evaluated");
+        System.out.println("0 - Exit");
 
-            switch (sc.nextInt()) {
-                case 1:
-                    System.out.println("Would you show the variable in the lattice? (true or false)");
-                    while (!sc.hasNextBoolean()) {
-                        System.out.println("Insert an integer please!");
-                        sc.nextLine();
-                    }
-                    Options.setSHOW_VARIABLE(sc.nextBoolean());
-                    break;
-                case 2:
+        switch (sc.nextInt()) {
+            case 1:
+                System.out.println("Would you show the variable in the lattice? (true or false)");
+                while (!sc.hasNextBoolean()) {
+                    System.out.println("Insert an integer please!");
                     sc.nextLine();
-                    System.out.println("Insert the NEW predicate, such as x<y");
-                    Options.setCondition(sc.nextLine());
-                    break;
-                case 3:
-                    exit=true;
-                    break;
-                case 0:
-                    return false;
-                default:
-                    System.out.println("The number is incorrect");
-                    exit = false;
-                    break;
-            }
-        }while (!exit);
+                }
+                Options.setSHOW_VARIABLE(sc.nextBoolean());
+                break;
+            case 2:
+                sc.nextLine();
+                System.out.println("Insert the NEW predicate, such as x<y");
+                Options.setCondition(sc.nextLine());
+                break;
+            case 0:
+                return false;
+            default:
+                return false;
+        }
 
 
         return true;
