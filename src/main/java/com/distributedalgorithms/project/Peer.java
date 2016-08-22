@@ -40,7 +40,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
     private long endTime;
 
     // The list of all the peers I can communicate with (that's why neighbours) except me.
-    private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
+    private ArrayList<ActorRef> neighbours = new ArrayList<ActorRef>(Options.getMAX_PEERS() - 1);
     private boolean ignoreNextStartMessages = false;
 
     private int variable;
@@ -75,7 +75,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             // defined in the Option class.
             // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
             // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
-            this.endTime = startTime + Options.PRECISION_TIME_UNIT.convert(
+            this.endTime = startTime + Options.getPRECISION_TIME_UNIT().convert(
                     ((StartMessage) message).getEndTime(),
                     ((StartMessage) message).getSimulationTimeUnits()
             );
@@ -86,7 +86,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             this.neighbours.remove(getSelf());
 
             Random rand = new Random();
-            int start_value = rand.nextInt(Options.MAX_INT);
+            int start_value = rand.nextInt(Options.getMAX_INT());
             this.variable= start_value;
 
             // Set up my VectorClock to the default value.
@@ -139,9 +139,9 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
         // modify the variable of the peer or not.
         Random rand = new Random();
         float prob = rand.nextFloat();
-        if (prob < Options.PROB_CHANGE_VARIABLE){
+        if (prob < Options.getPROB_CHANGE_VARIABLE()){
             rand = new Random();
-            this.variable = rand.nextInt(Options.MAX_INT);
+            this.variable = rand.nextInt(Options.getMAX_INT());
         }
     }
 
@@ -160,14 +160,14 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
             // This will be used to schedule an event that will be executed between the next 0 and DELTA_TIME DELTA_TIME_UNIT.
             // Values defined in the Options class.
             rand = new Random();
-            nearFuture = rand.nextInt(Options.DELTA_TIME);
+            nearFuture = rand.nextInt(Options.getDELTA_TIME());
 
             // The time scheduled is defined in term Options.DELTA_TIME and Options.DELTA_TIME_UNIT.
             // It might be the case that this time is defined in Options.SIMULATION_TIME_UNIT, convert it.
             // As written here: https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html
             // For example, to convert 10 minutes to milliseconds, use: TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
-            if (Options.DELTA_TIME_UNIT != Options.PRECISION_TIME_UNIT) {
-                nextAction += Options.PRECISION_TIME_UNIT.convert(nearFuture, Options.DELTA_TIME_UNIT);
+            if (Options.getDELTA_TIME_UNIT() != Options.getPRECISION_TIME_UNIT()) {
+                nextAction += Options.getPRECISION_TIME_UNIT().convert(nearFuture, Options.getDELTA_TIME_UNIT());
             } else {
                 nextAction += nearFuture;
             }
@@ -178,7 +178,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                 break;
             }
 
-            FiniteDuration future = FiniteDuration.create(nearFuture, Options.DELTA_TIME_UNIT);
+            FiniteDuration future = FiniteDuration.create(nearFuture, Options.getDELTA_TIME_UNIT());
 
             // I schedule what to do (send message or execute internal event) in the next future.
             getContext().system().scheduler().scheduleOnce(
@@ -201,7 +201,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
                                 Event e = new Event(id, current, variable);
 
                                 // As result, we have chosen to execute an internal event.
-                                if (resulting_prob < Options.PROB_INTERNAL_EVENT) {
+                                if (resulting_prob < Options.getPROB_INTERNAL_EVENT()) {
 
                                     // I just want to know remember that this was an internal event.
                                     e.setDescription("INTERNAL EVENT");
@@ -211,7 +211,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
 
                                     // Chose randomly a recipient from the set of neighbours.
                                     rand = new Random();
-                                    int recipientId = rand.nextInt(Options.MAX_PEERS - 1);
+                                    int recipientId = rand.nextInt(Options.getMAX_PEERS() - 1);
                                     ActorRef recipient = neighbours.get(recipientId);
 
                                     // The message is ready to be sent to selected recipient.
@@ -236,7 +236,7 @@ class Peer extends UntypedActor implements RequiresMessageQueue<BoundedMessageQu
         }
 
         // After the computation I will send my event history to the monitor
-        getContext().system().scheduler().scheduleOnce(Duration.create(nextAction, Options.PRECISION_TIME_UNIT),
+        getContext().system().scheduler().scheduleOnce(Duration.create(nextAction, Options.getPRECISION_TIME_UNIT()),
                 monitor, new EndMessage(id, events), getContext().dispatcher(), getSelf());
     }
 }

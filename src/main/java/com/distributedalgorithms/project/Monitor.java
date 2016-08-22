@@ -16,6 +16,7 @@ import com.distributedalgorithms.options.Options;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import sun.jvm.hotspot.debugger.posix.elf.ELFSectionHeader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +40,7 @@ class Monitor extends UntypedActor {
 
     // A list of events histories, one for each peer
     // We will consider only if the number of peers in the actual system is equal to 2.
-    private ArrayList<Event> eventsList[] = new ArrayList[Options.MAX_PEERS];
+    private ArrayList<Event> eventsList[] = new ArrayList[Options.getMAX_PEERS()];
 
     public void onReceive(Object message) {
 
@@ -49,7 +50,7 @@ class Monitor extends UntypedActor {
             // Catch when the start message is delivered.
             // It is better and more precise (of course more expansive) if we measure the execution time in Nanoseconds.
             log.info("Start listening at " + Options.getCurrentTime());
-            log.info("I will receive from everybody an EndMessage in " + Options.SIMULATION_TIME + " " + Options.SIMULATION_TIME_UNIT + ".");
+            log.info("I will receive from everybody an EndMessage in " + Options.getSIMULATION_TIME() + " " + Options.getSIMULATION_TIME_UNIT() + ".");
         }
         else if (message instanceof EndMessage) {
 
@@ -57,14 +58,17 @@ class Monitor extends UntypedActor {
             endMessagesReceived++;
 
             // Check if EndMessages arrived from all the peers
-            if (endMessagesReceived == Options.MAX_PEERS) {
+            if (endMessagesReceived == Options.getMAX_PEERS()) {
 
                 log.info("I received EndMessages from all the peers.");
 
-                if(Options.MAX_PEERS == 2) {
+                if(Options.getMAX_PEERS() == 2) {
                     log.info("There are only 2 peers. I start creating the lattice. Then I will run the evaluation.");
                     buildLattice(0, 0, eventsList[0], eventsList[1]);
+                }else{
+                    System.out.println("END of SIMULATION");
                 }
+
             }
         }
         else {
@@ -169,7 +173,7 @@ class Monitor extends UntypedActor {
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
 
             String last="";
-            if (Options.SHOW_VARIABLE){
+            if (Options.isSHOW_VARIABLE()){
                 last= x + "-" + y +"\"];\n";
             }else{
                 last=ris.get(i).toString() +"\"];\n";
@@ -192,19 +196,22 @@ class Monitor extends UntypedActor {
 
 
         content+="}";
-        writeonFile(content,Options.LATTICE_OUTPUT_DOT_FILE_PATH);
+        writeonFile(content,Options.getLATTICE_OUTPUT_DOT_FILE_PATH());
+
+        do {
+            if (!possibly(ris, l0, l1)) {
+                System.out.println("There are NOT global states that satisfying the predicate");
+            }
+
+            if (definitely(ris, l0, l1)) {
+                System.out.println("The distributed computation satisfies Definitely");
+            } else {
+                System.out.println("The distributed computation NOT satisfies Definitely");
+            }
 
 
-        if ( ! possibly(ris, l0, l1, content.substring(0,content.length()-1))){
-            System.out.print("There are NOT global states that satisfying the predicate");
-        }
-
-        if ( definitely(ris,l0,l1) ){
-            System.out.print("The distributed computation satisfies Definitely");
-        } else{
-            System.out.print("The distributed computation NOT satisfies Definitely");
-        }
-
+        }while (secondMenu());
+        System.out.println("END");
     }
 
 
@@ -246,7 +253,61 @@ class Monitor extends UntypedActor {
 
     }
 
-    public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1, String content){
+    /**
+     * Create the content of the dot file for the creation of the image lattice with graphviz
+     * @param list the ordered list of the vertex in the lattice
+     * @param l0 first list of events
+     * @param l1 second list of events
+     */
+    public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1){
+
+        int somma = Integer.parseInt(list.lastElement().getFirst())+Integer.parseInt(list.lastElement().getSecond())+1;
+        Vector<String> level = new Vector<String>();
+
+        // Initialize the level vector with empty strings
+        for (int i = 0; i < somma; i++) {
+            level.add("");
+        }
+
+        // Set the configuration of the file
+        String content= "digraph item_set {\n" +
+                "\n" +
+                "// set edge attribute\n" +
+                "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
+                "splines=false\n" +
+                "\n";
+
+
+        // For each vertex create the String "id [label='#event_peer0 - #event_peer1'];" or "id [label='var x - var y'];",
+        // according to the choice of the user, and add it in the correct level of the vector
+        for (int i = 0; i < list.size(); i++) {
+            somma = Integer.parseInt(list.get(i).getFirst())+Integer.parseInt(list.get(i).getSecond());
+            int x = l0.get(Integer.parseInt(list.get(i).getFirst())).getVariable(); //varible peer0
+            int y = l1.get(Integer.parseInt(list.get(i).getSecond())).getVariable(); //variable peer1
+
+            String last="";
+            if (Options.isSHOW_VARIABLE()){
+                last= x + "-" + y +"\"];\n";
+            }else{
+                last=list.get(i).toString() +"\"];\n";
+            }
+
+            level.set(somma, level.get(somma)+ list.get(i).toInt() + " [label = \""+last);
+        }
+
+        for (int i = 0; i < level.size(); i++) {
+            content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
+        }
+
+        // For each vertex create the String of the parents such as "0 -> 10, 01;" that represent the lattice edges
+        for (int i = 0; i < list.size(); i++) {
+            ProcessVertex tmp = list.get(i);
+            if(tmp.hasParent()) {
+                content+=tmp.toInt() + " -> " + tmp.getParentsString()+"\n";
+            }
+        }
+        // This string contains the vertex that satisfy the predicate
+
         String color="";
         int possibly = 0;
 
@@ -263,7 +324,7 @@ class Monitor extends UntypedActor {
             content +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
             System.out.println("There are "+ possibly +" global states that satisfying the predicate");
             content+="}";
-            writeonFile(content, Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
+            writeonFile(content, Options.getLATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH());
             return true;
         }else{
             return false;
@@ -299,7 +360,7 @@ class Monitor extends UntypedActor {
                 }
             }
             // when arrived at the bottom of lattice and if the vector current is empty then the definitely is false
-            if (current.isEmpty() & level==level_max){
+            if (current.isEmpty() && level==level_max){
                 return false;
             }
             level++;
@@ -308,6 +369,36 @@ class Monitor extends UntypedActor {
                 last.add(tmp);
             }
             current.removeAllElements();
+        }
+        return true;
+    }
+
+
+    public boolean secondMenu(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("What would you like to do?");
+        System.out.println("1 - Change the label of the lattice");
+        System.out.println("2 - Change the predicate to be evaluated");
+        System.out.println("0 - Exit");
+
+        switch (sc.nextInt()) {
+            case 1:
+                System.out.println("Would you show the variable in the lattice? (true or false)");
+                while (!sc.hasNextBoolean()) {
+                    System.out.println("Insert an integer please!");
+                    sc.nextLine();
+                }
+                Options.setSHOW_VARIABLE(sc.nextBoolean());
+                break;
+            case 2:
+                sc.nextLine();
+                System.out.println("Insert the NEW predicate, such as x<y");
+                Options.setCondition(sc.nextLine());
+                break;
+            case 0:
+                return false;
+            default:
+                return false;
         }
         return true;
     }

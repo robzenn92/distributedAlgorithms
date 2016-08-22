@@ -26,7 +26,7 @@ public class StartMessage {
 
     // Contains the list of peers which will be part of the system
     // Used in order to build a fully connected graph between all the nodes in the network
-    private ArrayList<ActorRef> peers = new ArrayList<ActorRef>(Options.MAX_PEERS - 1);
+    private ArrayList<ActorRef> peers = new ArrayList<ActorRef>(Options.getMAX_PEERS() - 1);
 
     // Time and Time units define the duration of the simulation of each peer.
     private int endTime;

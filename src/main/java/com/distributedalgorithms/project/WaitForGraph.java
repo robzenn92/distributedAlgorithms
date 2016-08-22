@@ -19,7 +19,7 @@ class WaitForGraph {
     DirectedGraph<ProcessVertex, DefaultEdge> wfg = new DefaultDirectedGraph<ProcessVertex, DefaultEdge>(DefaultEdge.class);
 
     public WaitForGraph() {
-        for (int i = 0; i < Options.MAX_PEERS; i++) {
+        for (int i = 0; i < Options.getMAX_PEERS(); i++) {
             ProcessVertex v = new ProcessVertex("Process" + String.valueOf(i));
             wfg.addVertex(v);
         }
