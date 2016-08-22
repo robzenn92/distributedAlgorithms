@@ -145,15 +145,14 @@ class Monitor extends UntypedActor {
         Collections.sort(ris);
 
         int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
-        Vector<String> level = new Vector<String>();    //vettore contenente i vertici del lattice divisi in livelli
+        Vector<String> level = new Vector<String>();
 
         // Initialize the level vector with empty strings
         for (int i = 0; i < somma; i++) {
             level.add("");
         }
 
-        // Set the first level description
-        // Level 0-0
+        // Set the configuration of the file
         String content= "digraph item_set {\n" +
                 "\n" +
                 "// set edge attribute\n" +
@@ -162,23 +161,20 @@ class Monitor extends UntypedActor {
                 "\n";
 
 
-        String color="";
-        int possibly = 0;
-
+        // For each vertex create the String "id [label='#event_peer0 - #event_peer1'];" or "id [label='var x - var y'];",
+        // according to the choice of the user, and add it in the correct level of the vector
         for (int i = 0; i < ris.size(); i++) {
             somma = Integer.parseInt(ris.get(i).getFirst())+Integer.parseInt(ris.get(i).getSecond());
             int x = l0.get(Integer.parseInt(ris.get(i).getFirst())).getVariable(); //varible peer0
             int y = l1.get(Integer.parseInt(ris.get(i).getSecond())).getVariable(); //variable peer1
-            if (Options.getCondition(x,y)){
-                possibly++;
-                color+=ris.get(i).toInt()+",";
-            }
+
             String last="";
             if (Options.SHOW_VARIABLE){
                 last= x + "-" + y +"\"];\n";
             }else{
                 last=ris.get(i).toString() +"\"];\n";
             }
+
             level.set(somma, level.get(somma)+ ris.get(i).toInt() + " [label = \""+last);
         }
 
@@ -186,7 +182,7 @@ class Monitor extends UntypedActor {
             content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
         }
 
-        //inserisco per ogni vertice i suoi figli
+        // For each vertex create the String of the parents such as "0 -> 10, 01;" that represent the lattice edges
         for (int i = 0; i < ris.size(); i++) {
             ProcessVertex tmp = ris.get(i);
             if(tmp.hasParent()) {
@@ -194,18 +190,14 @@ class Monitor extends UntypedActor {
             }
         }
 
-        String content_with_color= content;
-        if (color.length()>0){
-            content_with_color +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
-            System.out.println("There are "+ possibly +" global states that satisfying the predicate");
-        }
-        content_with_color+="}";
+
         content+="}";
-
-
         writeonFile(content,Options.LATTICE_OUTPUT_DOT_FILE_PATH);
 
-        writeonFile(content_with_color,Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
+
+        if ( ! possibly(ris, l0, l1, content.substring(0,content.length()-1))){
+            System.out.print("There are NOT global states that satisfying the predicate");
+        }
 
         if ( definitely(ris,l0,l1) ){
             System.out.print("The distributed computation satisfies Definitely");
@@ -238,7 +230,7 @@ class Monitor extends UntypedActor {
             fop.flush();
             fop.close();
 
-            System.out.println("Done");
+            System.out.println("The file is written in "+path);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -253,6 +245,33 @@ class Monitor extends UntypedActor {
         }
 
     }
+
+    public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1, String content){
+        String color="";
+        int possibly = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            int x = l0.get(Integer.parseInt(list.get(i).getFirst())).getVariable(); // the variable peer0
+            int y = l1.get(Integer.parseInt(list.get(i).getSecond())).getVariable(); // the variable peer1
+            if (Options.getCondition(x, y)) {
+                possibly++;
+                color += list.get(i).toInt() + ",";
+            }
+        }
+
+        if (color.length()>0){
+            content +=color.substring(0,color.length()-1)+"[style=filled fillcolor=\"red\"]\n";
+            System.out.println("There are "+ possibly +" global states that satisfying the predicate");
+            content+="}";
+            writeonFile(content, Options.LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH);
+            return true;
+        }else{
+            return false;
+        }
+
+
+
+    }
     
     public boolean definitely(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1){
         Vector<ProcessVertex> last = new Vector<ProcessVertex>();
@@ -260,15 +279,16 @@ class Monitor extends UntypedActor {
         ProcessVertex event00 = list.get(0);
 
         int level_max = Integer.parseInt(list.lastElement().getFirst())+Integer.parseInt(list.lastElement().getSecond());
-        int x = l0.get(0).getVariable(); //varible peer0
-        int y = l1.get(0).getVariable(); //variable peer1
+        int x = l0.get(0).getVariable(); // the variable of peer0 at start time
+        int y = l1.get(0).getVariable(); // the variable of peer0 at start time
+        // If the first event satisfy the predicate the definitely is true, else add the event at the vector 'last'
         if (! Options.getCondition(x,y)){
             last.add(event00);
         }
         int level = 0;
-        //System.out.println(last.get(0).toString());
+
         while (!last.isEmpty()){
-            // inserisco in current tutti i vertici raggiungibili
+            // for each vertex in last, Add in the current Vector the parents that not satisfy the predicate
             for (ProcessVertex tmp: last) {
                 for (ProcessVertex parent: tmp.getParents()) {
                     x = l0.get(Integer.parseInt(parent.getFirst())).getVariable(); //varible peer0
@@ -278,6 +298,7 @@ class Monitor extends UntypedActor {
                     }
                 }
             }
+            // when arrived at the bottom of lattice and if the vector current is empty then the definitely is false
             if (current.isEmpty() & level==level_max){
                 return false;
             }
