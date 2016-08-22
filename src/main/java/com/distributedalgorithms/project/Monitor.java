@@ -134,16 +134,22 @@ class Monitor extends UntypedActor {
         }
     }
 
-
+    /**
+     * Create the content of the dot file for the creation of the image lattice with graphviz
+     * @param lattice the lattice created with the buildLattice function.
+     * @param l0 first list of events
+     * @param l1 second list of events
+     */
     private void writeLatticeOnFile(DirectedGraph<ProcessVertex, DefaultEdge> lattice, ArrayList<Event> l0, ArrayList<Event> l1) {
 
-
+        // In ris vector there are the Vertex in order of the level
         Vector<ProcessVertex> ris = new Vector<ProcessVertex>();
         for (ProcessVertex pv:lattice.vertexSet()) {
             ris.add(pv);
         }
         Collections.sort(ris);
 
+        // the somma variable is the maximum level of the lattice
         int somma = Integer.parseInt(ris.lastElement().getFirst())+Integer.parseInt(ris.lastElement().getSecond())+1;
         Vector<String> level = new Vector<String>();
 
@@ -246,8 +252,18 @@ class Monitor extends UntypedActor {
 
     }
 
+
+    /**
+     * Create the content of the dot file for the creation of the image lattice with graphviz
+     * @param list the ordered list of the vertex in the lattice
+     * @param l0 first list of events
+     * @param l1 second list of events
+     * @param content the content of the lattice file
+     */
     public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1, String content){
+        // This string contains the vertex that satisfy the predicate
         String color="";
+        // The possibly variable is the number of global states that satisfy the predicate
         int possibly = 0;
 
         for (int i = 0; i < list.size(); i++) {
@@ -272,10 +288,16 @@ class Monitor extends UntypedActor {
 
 
     }
-    
+
+    /**
+     * Create the content of the dot file for the creation of the image lattice with graphviz
+     * @param list the ordered list of the vertex in the lattice
+     * @param l0 first list of events
+     * @param l1 second list of events
+     */
     public boolean definitely(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1){
-        Vector<ProcessVertex> last = new Vector<ProcessVertex>();
-        Vector<ProcessVertex> current = new Vector<ProcessVertex>();
+        Vector<ProcessVertex> last = new Vector<ProcessVertex>(); // Contains the vertex that NOT satisfy the predicate in the last level
+        Vector<ProcessVertex> current = new Vector<ProcessVertex>(); // Contains the vertex that NOT satisfy the predicate in the current level
         ProcessVertex event00 = list.get(0);
 
         int level_max = Integer.parseInt(list.lastElement().getFirst())+Integer.parseInt(list.lastElement().getSecond());
