@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.30)  22 AUG 2016 10:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.30)  22 AUG 2016 18:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -561,43 +561,54 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[1] [2] [3] [4] (./worst_case_scenario.tex) [5]
-(./worst_case_scenario_solved.tex) (./events_history.tex) [6]
-(./simulation_example.tex) (./simulation_example_vc.tex)
-Overfull \hbox (4.25833pt too wide) in paragraph at lines 124--129
+[1] [2] [3] [4] [5] (./worst_case_scenario.tex)
+(./worst_case_scenario_solved.tex) [6] (./events_history.tex)
+(./simulation_example.tex) (./simulation_example_vc.tex) [7]
+Overfull \hbox (4.25833pt too wide) in paragraph at lines 126--131
  [] 
  []
 
-<scheduler.jpg, id=41, 850.17625pt x 638.385pt>
+<scheduler.jpg, id=44, 850.17625pt x 638.385pt>
 File: scheduler.jpg Graphic file (type jpg)
  <use scheduler.jpg>
-Package pdftex.def Info: scheduler.jpg used on input line 131.
+Package pdftex.def Info: scheduler.jpg used on input line 133.
 (pdftex.def)             Requested size: 360.0pt x 270.32132pt.
- [7]
-(./main.bbl [8 <./scheduler.jpg>]) [9] (./main.aux) ) 
+ [8]
+[9 <./scheduler.jpg>]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 149.
+
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 149.
+ (./main.bbl
+[10]) [11] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 14394 strings out of 493089
- 284773 string characters out of 6134841
- 338155 words of memory out of 5000000
- 17597 multiletter control sequences out of 15000+600000
+ 14411 strings out of 493089
+ 285078 string characters out of 6134841
+ 340155 words of memory out of 5000000
+ 17611 multiletter control sequences out of 15000+600000
  11584 words of font info for 42 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,15n,54p,1273b,1325s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2015/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2015/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2015/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2015/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2015/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsl10.pfb></usr/local/texlive/2015/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/texmf-dist/font
-s/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on main.pdf (10 pages, 318966 bytes).
+ 55i,15n,54p,1619b,1325s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2015/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmbx12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmr10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr6.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmsl10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mtt10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+tt9.pfb>
+Output written on main.pdf (12 pages, 332688 bytes).
 PDF statistics:
- 87 PDF objects out of 1000 (max. 8388607)
- 60 compressed objects within 1 object stream
+ 97 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  23 words of extra memory for PDF output out of 10000 (max. 10000000)
 
