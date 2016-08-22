@@ -50,7 +50,7 @@ public class Options {
      * If true, it shows the variable of the peer at that the moment
      *
      */
-    private static boolean SHOW_VARIABLE = true;
+    private static boolean SHOW_VARIABLE = false;
 
     private static String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
     private static String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/latticeWithVar.dot";

@@ -205,7 +205,7 @@ class Monitor extends UntypedActor {
         writeonFile(content,Options.getLATTICE_OUTPUT_DOT_FILE_PATH());
 
         do {
-            if (!possibly(ris, l0, l1, content.substring(0, content.length() - 1))) {
+            if (!possibly(ris, l0, l1)) {
                 System.out.println("There are NOT global states that satisfying the predicate");
             }
 
@@ -214,20 +214,9 @@ class Monitor extends UntypedActor {
             } else {
                 System.out.println("The distributed computation NOT satisfies Definitely");
             }
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Would you change the predicate? (true or false)");
-            while (!sc.hasNextBoolean()) {
-                System.out.println("Insert an integer please!");
-                sc.nextLine();
-            }
-            if(sc.nextBoolean()){
-                sc.nextLine();
-                System.out.println("Insert the NEW predicate:");
-                Options.setCondition(sc.nextLine());
-            }else{
-                break;
-            }
-        }while (true);
+
+
+        }while (secondMenu());
         System.out.println("END");
     }
 
@@ -276,9 +265,53 @@ class Monitor extends UntypedActor {
      * @param list the ordered list of the vertex in the lattice
      * @param l0 first list of events
      * @param l1 second list of events
-     * @param content the content of the lattice file
      */
-    public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1, String content){
+    public boolean possibly(Vector<ProcessVertex> list, ArrayList<Event> l0, ArrayList<Event> l1){
+        int somma = Integer.parseInt(list.lastElement().getFirst())+Integer.parseInt(list.lastElement().getSecond())+1;
+        Vector<String> level = new Vector<String>();
+
+        // Initialize the level vector with empty strings
+        for (int i = 0; i < somma; i++) {
+            level.add("");
+        }
+
+        // Set the configuration of the file
+        String content= "digraph item_set {\n" +
+                "\n" +
+                "// set edge attribute\n" +
+                "edge [dir = none tailport = \"s\" headport = \"n\"]\n" +
+                "splines=false\n" +
+                "\n";
+
+
+        // For each vertex create the String "id [label='#event_peer0 - #event_peer1'];" or "id [label='var x - var y'];",
+        // according to the choice of the user, and add it in the correct level of the vector
+        for (int i = 0; i < list.size(); i++) {
+            somma = Integer.parseInt(list.get(i).getFirst())+Integer.parseInt(list.get(i).getSecond());
+            int x = l0.get(Integer.parseInt(list.get(i).getFirst())).getVariable(); //varible peer0
+            int y = l1.get(Integer.parseInt(list.get(i).getSecond())).getVariable(); //variable peer1
+
+            String last="";
+            if (Options.isSHOW_VARIABLE()){
+                last= x + "-" + y +"\"];\n";
+            }else{
+                last=list.get(i).toString() +"\"];\n";
+            }
+
+            level.set(somma, level.get(somma)+ list.get(i).toInt() + " [label = \""+last);
+        }
+
+        for (int i = 0; i < level.size(); i++) {
+            content+="// the "+(i+1)+"o layer\n"+level.get(i)+"\n";
+        }
+
+        // For each vertex create the String of the parents such as "0 -> 10, 01;" that represent the lattice edges
+        for (int i = 0; i < list.size(); i++) {
+            ProcessVertex tmp = list.get(i);
+            if(tmp.hasParent()) {
+                content+=tmp.toInt() + " -> " + tmp.getParentsString()+"\n";
+            }
+        }
         // This string contains the vertex that satisfy the predicate
         String color="";
         // The possibly variable is the number of global states that satisfy the predicate
@@ -349,6 +382,47 @@ class Monitor extends UntypedActor {
             }
             current.removeAllElements();
         }
+        return true;
+    }
+
+
+    public boolean secondMenu(){
+        boolean exit=false;
+        Scanner sc = new Scanner(System.in);
+        do {
+            System.out.println("What would you like to do?");
+            System.out.println("1 - Change the label of the lattice");
+            System.out.println("2 - Change the predicate to be evaluated");
+            System.out.println("3 - Recreate the lattice with new options");
+            System.out.println("0 - Exit");
+
+            switch (sc.nextInt()) {
+                case 1:
+                    System.out.println("Would you show the variable in the lattice? (true or false)");
+                    while (!sc.hasNextBoolean()) {
+                        System.out.println("Insert an integer please!");
+                        sc.nextLine();
+                    }
+                    Options.setSHOW_VARIABLE(sc.nextBoolean());
+                    break;
+                case 2:
+                    sc.nextLine();
+                    System.out.println("Insert the NEW predicate, such as x<y");
+                    Options.setCondition(sc.nextLine());
+                    break;
+                case 3:
+                    exit=true;
+                    break;
+                case 0:
+                    return false;
+                default:
+                    System.out.println("The number is incorrect");
+                    exit = false;
+                    break;
+            }
+        }while (!exit);
+
+
         return true;
     }
 }
