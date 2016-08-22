@@ -10,6 +10,9 @@ package com.distributedalgorithms.options;
 import scala.Int;
 
 import java.util.concurrent.TimeUnit;
+import org.mariuszgromada.math.mxparser.*;
+
+
 
 public class Options {
 
@@ -102,7 +105,11 @@ public class Options {
     }
 
     public static boolean getCondition(int x, int y){
-        if ( x<(y-3) ) return true;
+        String tmp = condition;
+        tmp = tmp.replace("x",String.valueOf(x));
+        tmp = tmp.replace("y", String.valueOf(y));
+        Expression e = new Expression(tmp);
+        if ( e.calculate()==1.0) return true;
         else return false;
     }
 
