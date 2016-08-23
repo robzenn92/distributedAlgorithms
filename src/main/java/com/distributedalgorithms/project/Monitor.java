@@ -16,7 +16,6 @@ import com.distributedalgorithms.options.Options;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import sun.jvm.hotspot.debugger.posix.elf.ELFSectionHeader;
 
 import java.io.File;
 import java.io.FileOutputStream;

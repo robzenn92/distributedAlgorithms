@@ -7,9 +7,6 @@
 
 package com.distributedalgorithms.project;
 
-import com.distributedalgorithms.options.Options;
-import java.util.Random;
-
 /**
  * Description of the class: Event
  *
