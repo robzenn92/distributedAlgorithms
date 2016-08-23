@@ -22,4 +22,7 @@ And this command to create the image of the lattice with the filled vertex where
 
 When the simulation ends, you can always change the predicate or modify the label of the latticeWithVar and recreate it without running a new simulation.
 
-If you want to recompile it you can also use ant commands and maven in order to download all the dependencies.
+If you want to recompile it you can also use 'ant' and when you finish run 'java -jar project.jar'
+
+!!IMPORTANT!!
+Do not delete anything into /lib folder
