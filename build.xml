@@ -143,6 +143,18 @@
   <path id="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath">
     <pathelement location="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.16/slf4j-api-1.7.16.jar"/>
   </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
   
   <!-- Modules -->
   
@@ -179,6 +191,7 @@
     <path refid="library.maven:_org.jgrapht:jgrapht-core:0.9.2.classpath"/>
     <path refid="library.maven:_com.typesafe.akka:akka-slf4j_2.11:2.4.8.classpath"/>
     <path refid="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath"/>
+    <pathelement location="${basedir}/lib/mxparser.jar"/>
   </path>
   
   <path id="com.examples.robertozen.runtime.production.module.classpath">
@@ -195,6 +208,7 @@
     <path refid="library.maven:_org.jgrapht:jgrapht-core:0.9.2.classpath"/>
     <path refid="library.maven:_com.typesafe.akka:akka-slf4j_2.11:2.4.8.classpath"/>
     <path refid="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath"/>
+    <pathelement location="${basedir}/lib/mxparser.jar"/>
   </path>
   
   <path id="com.examples.robertozen.module.classpath">
@@ -212,6 +226,7 @@
     <path refid="library.maven:_org.jgrapht:jgrapht-core:0.9.2.classpath"/>
     <path refid="library.maven:_com.typesafe.akka:akka-slf4j_2.11:2.4.8.classpath"/>
     <path refid="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath"/>
+    <pathelement location="${basedir}/lib/mxparser.jar"/>
   </path>
   
   <path id="com.examples.robertozen.runtime.module.classpath">
@@ -229,6 +244,7 @@
     <path refid="library.maven:_org.jgrapht:jgrapht-core:0.9.2.classpath"/>
     <path refid="library.maven:_com.typesafe.akka:akka-slf4j_2.11:2.4.8.classpath"/>
     <path refid="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath"/>
+    <pathelement location="${basedir}/lib/mxparser.jar"/>
   </path>
   
   
@@ -256,15 +272,15 @@
   
   <target name="compile.module.com.examples.robertozen" depends="compile.module.com.examples.robertozen.production,compile.module.com.examples.robertozen.tests" description="Compile module com.examples.robertozen"/>
   
-  <target name="compile.module.com.examples.robertozen.production" description="Compile module com.examples.robertozen; production classes">
+  <target name="compile.module.com.examples.robertozen.production" depends="register.custom.compilers" description="Compile module com.examples.robertozen; production classes">
     <mkdir dir="${com.examples.robertozen.output.dir}"/>
-    <javac destdir="${com.examples.robertozen.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
+    <javac2 destdir="${com.examples.robertozen.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
       <compilerarg line="${compiler.args.com.examples.robertozen}"/>
       <bootclasspath refid="com.examples.robertozen.module.bootclasspath"/>
       <classpath refid="com.examples.robertozen.module.production.classpath"/>
       <src refid="com.examples.robertozen.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.com.examples.robertozen"/>
-    </javac>
+    </javac2>
     
     <copy todir="${com.examples.robertozen.output.dir}">
       <fileset dir="${module.com.examples.robertozen.basedir}/src/main/java">
@@ -278,15 +294,15 @@
     </copy>
   </target>
   
-  <target name="compile.module.com.examples.robertozen.tests" depends="compile.module.com.examples.robertozen.production" description="compile module com.examples.robertozen; test classes" unless="skip.tests">
+  <target name="compile.module.com.examples.robertozen.tests" depends="register.custom.compilers,compile.module.com.examples.robertozen.production" description="compile module com.examples.robertozen; test classes" unless="skip.tests">
     <mkdir dir="${com.examples.robertozen.testoutput.dir}"/>
-    <javac destdir="${com.examples.robertozen.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
+    <javac2 destdir="${com.examples.robertozen.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
       <compilerarg line="${compiler.args.com.examples.robertozen}"/>
       <bootclasspath refid="com.examples.robertozen.module.bootclasspath"/>
       <classpath refid="com.examples.robertozen.module.classpath"/>
       <src refid="com.examples.robertozen.module.test.sourcepath"/>
       <patternset refid="excluded.from.compilation.com.examples.robertozen"/>
-    </javac>
+    </javac2>
     
     <copy todir="${com.examples.robertozen.testoutput.dir}">
       <fileset dir="${module.com.examples.robertozen.basedir}/src/test/java">

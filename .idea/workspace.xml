@@ -3,13 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="76e45745-cf90-4a20-89f3-7f7e2fbbe8b9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/messages/StartMessage.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/messages/StartMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/options/Options.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/options/Options.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Monitor.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Monitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Peer.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Peer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Simulator.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Simulator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/VectorClock.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/VectorClock.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/WaitForGraph.java" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/WaitForGraph.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.properties" afterPath="$PROJECT_DIR$/build.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com.examples.robertozen.iml" afterPath="$PROJECT_DIR$/com.examples.robertozen.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/out/lattice.dot" afterPath="$PROJECT_DIR$/src/main/java/com/distributedalgorithms/out/lattice.dot" />
     </list>
     <ignored path="distributedAlgorithms.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,7 +43,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Simulator.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Simulator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Simulator.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="353">
@@ -61,25 +58,12 @@
       <file leaf-file-name="Options.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/options/Options.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="110" column="30" selection-start-line="110" selection-start-column="30" selection-end-line="110" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Monitor.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Monitor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="338" column="30" selection-start-line="338" selection-start-column="30" selection-end-line="338" selection-end-column="30" />
+            <state relative-caret-position="225">
+              <caret line="20" column="22" selection-start-line="20" selection-start-column="22" selection-end-line="20" selection-end-column="22" />
               <folding>
-                <element signature="e#3691#3719#0" expanded="true" />
-                <element signature="e#6143#6158#0" expanded="true" />
-                <element signature="e#6441#6449#0" expanded="true" />
-                <element signature="e#10247#10255#0" expanded="true" />
-                <element signature="e#13162#13177#0" expanded="true" />
-                <element signature="e#13231#13246#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#3592#3593#0" expanded="true" />
+                <element signature="e#3714#3715#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -347,14 +331,16 @@
   </component>
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
-    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="distributedalgorithms" />
+    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="build" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/mxparser.jar!/" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -580,7 +566,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="833" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -980,28 +966,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Simulator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="83" column="43" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/options/Options.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="110" column="30" selection-start-line="110" selection-start-column="30" selection-end-line="110" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Monitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="338" column="30" selection-start-line="338" selection-start-column="30" selection-end-line="338" selection-end-column="30" />
+        <state relative-caret-position="4845">
+          <caret line="342" column="59" selection-start-line="342" selection-start-column="59" selection-end-line="342" selection-end-column="59" />
           <folding>
             <element signature="e#3691#3719#0" expanded="true" />
             <element signature="e#6143#6158#0" expanded="true" />
@@ -1009,6 +977,28 @@
             <element signature="e#10247#10255#0" expanded="true" />
             <element signature="e#13162#13177#0" expanded="true" />
             <element signature="e#13231#13246#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/options/Options.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="20" column="22" selection-start-line="20" selection-start-column="22" selection-end-line="20" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3592#3593#0" expanded="true" />
+            <element signature="e#3714#3715#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/distributedalgorithms/project/Simulator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="83" column="43" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1058,7 +1048,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
