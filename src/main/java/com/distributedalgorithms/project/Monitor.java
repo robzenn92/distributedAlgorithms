@@ -194,7 +194,6 @@ class Monitor extends UntypedActor {
             }
         }
 
-
         content+="}";
         writeonFile(content,Options.getLATTICE_OUTPUT_DOT_FILE_PATH());
 

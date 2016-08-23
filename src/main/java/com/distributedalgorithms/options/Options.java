@@ -59,15 +59,16 @@ public class Options {
     /**
      * For the choice of labels of the latex vertices.
      * If false, it shows the indexes of the events.
-     * Otherwise, it shows the values of the peer variables at each events.
+     * Otherwise, it shows the values of the peer
+     * variables at each events.
      */
     private static boolean SHOW_VARIABLE = false;
 
     /**
      * The paths of the output files.
      */
-    private static String LATTICE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/lattice.dot";
-    private static String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "src/main/java/com/distributedalgorithms/out/latticeWithVar.dot";
+    private static String LATTICE_OUTPUT_DOT_FILE_PATH = "out/lattice.dot";
+    private static String LATTICE_WITH_VARIABLE_OUTPUT_DOT_FILE_PATH = "out/latticeWithVar.dot";
 
     /**
      * Simulation time options

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="distributedalgorithms" default="all">
-  
-  
+
   <property file="build.properties"/>
-  <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
+
   <property name="skip.tests" value="true"/>
-   -->
   
   <!-- Compiler options -->
-  
   <property name="compiler.debug" value="on"/>
   <property name="compiler.generate.no.warnings" value="off"/>
   <property name="compiler.args" value=""/>
@@ -143,35 +139,22 @@
   <path id="library.maven:_org.slf4j:slf4j-api:1.7.16.classpath">
     <pathelement location="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.16/slf4j-api-1.7.16.jar"/>
   </path>
-  <!-- Register Custom Compiler Taskdefs -->
-  <property name="javac2.home" value="${idea.home}/lib"/>
-  <path id="javac2.classpath">
-    <pathelement location="${javac2.home}/javac2.jar"/>
-    <pathelement location="${javac2.home}/jdom.jar"/>
-    <pathelement location="${javac2.home}/asm-all.jar"/>
-    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
-  </path>
-  <target name="register.custom.compilers">
-    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
-    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
-  </target>
   
   <!-- Modules -->
   
   
   <!-- Module com.examples.robertozen -->
   
-  <dirname property="module.com.examples.robertozen.basedir" file="${ant.file}"/>
-  
-  
+  <dirname property="distributedsystem.basedir" file="${ant.file}"/>
+
   <property name="module.jdk.home.com.examples.robertozen" value="${project.jdk.home}"/>
   <property name="module.jdk.bin.com.examples.robertozen" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.com.examples.robertozen" value="${project.jdk.classpath}"/>
   
   <property name="compiler.args.com.examples.robertozen" value="-encoding UTF-8 -source 1.5 -target 1.5 ${compiler.args}"/>
   
-  <property name="com.examples.robertozen.output.dir" value="${module.com.examples.robertozen.basedir}/target/classes"/>
-  <property name="com.examples.robertozen.testoutput.dir" value="${module.com.examples.robertozen.basedir}/target/test-classes"/>
+  <property name="distributedsystem.output.dir" value="${distributedsystem.basedir}/target/classes"/>
+  <property name="distributedsystem.testoutput.dir" value="${distributedsystem.basedir}/target/test-classes"/>
   
   <path id="com.examples.robertozen.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
@@ -195,7 +178,7 @@
   </path>
   
   <path id="com.examples.robertozen.runtime.production.module.classpath">
-    <pathelement location="${com.examples.robertozen.output.dir}"/>
+    <pathelement location="${distributedsystem.output.dir}"/>
     <path refid="library.maven:_com.typesafe.akka:akka-actor_2.11:2.4.7.classpath"/>
     <path refid="library.maven:_org.scala-lang:scala-library:2.11.8.classpath"/>
     <path refid="library.maven:_com.typesafe:config:1.3.0.classpath"/>
@@ -213,7 +196,7 @@
   
   <path id="com.examples.robertozen.module.classpath">
     <path refid="${module.jdk.classpath.com.examples.robertozen}"/>
-    <pathelement location="${com.examples.robertozen.output.dir}"/>
+    <pathelement location="${distributedsystem.output.dir}"/>
     <path refid="library.maven:_com.typesafe.akka:akka-actor_2.11:2.4.7.classpath"/>
     <path refid="library.maven:_org.scala-lang:scala-library:2.11.8.classpath"/>
     <path refid="library.maven:_com.typesafe:config:1.3.0.classpath"/>
@@ -230,8 +213,8 @@
   </path>
   
   <path id="com.examples.robertozen.runtime.module.classpath">
-    <pathelement location="${com.examples.robertozen.testoutput.dir}"/>
-    <pathelement location="${com.examples.robertozen.output.dir}"/>
+    <pathelement location="${distributedsystem.testoutput.dir}"/>
+    <pathelement location="${distributedsystem.output.dir}"/>
     <path refid="library.maven:_com.typesafe.akka:akka-actor_2.11:2.4.7.classpath"/>
     <path refid="library.maven:_org.scala-lang:scala-library:2.11.8.classpath"/>
     <path refid="library.maven:_com.typesafe:config:1.3.0.classpath"/>
@@ -257,14 +240,14 @@
   </patternset>
   
   <path id="com.examples.robertozen.module.sourcepath">
-    <dirset dir="${module.com.examples.robertozen.basedir}">
+    <dirset dir="${distributedsystem.basedir}">
       <include name="src/main/java"/>
       <include name="src/main/resources"/>
     </dirset>
   </path>
   
   <path id="com.examples.robertozen.module.test.sourcepath">
-    <dirset dir="${module.com.examples.robertozen.basedir}">
+    <dirset dir="${distributedsystem.basedir}">
       <include name="src/test/java"/>
     </dirset>
   </path>
@@ -272,40 +255,40 @@
   
   <target name="compile.module.com.examples.robertozen" depends="compile.module.com.examples.robertozen.production,compile.module.com.examples.robertozen.tests" description="Compile module com.examples.robertozen"/>
   
-  <target name="compile.module.com.examples.robertozen.production" depends="register.custom.compilers" description="Compile module com.examples.robertozen; production classes">
-    <mkdir dir="${com.examples.robertozen.output.dir}"/>
-    <javac2 destdir="${com.examples.robertozen.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
+  <target name="compile.module.com.examples.robertozen.production" description="Compile module com.examples.robertozen; production classes">
+    <mkdir dir="${distributedsystem.output.dir}"/>
+    <javac destdir="${distributedsystem.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
       <compilerarg line="${compiler.args.com.examples.robertozen}"/>
       <bootclasspath refid="com.examples.robertozen.module.bootclasspath"/>
       <classpath refid="com.examples.robertozen.module.production.classpath"/>
       <src refid="com.examples.robertozen.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.com.examples.robertozen"/>
-    </javac2>
+    </javac>
     
-    <copy todir="${com.examples.robertozen.output.dir}">
-      <fileset dir="${module.com.examples.robertozen.basedir}/src/main/java">
+    <copy todir="${distributedsystem.output.dir}">
+      <fileset dir="${distributedsystem.basedir}/src/main/java">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
-      <fileset dir="${module.com.examples.robertozen.basedir}/src/main/resources">
+      <fileset dir="${distributedsystem.basedir}/src/main/resources">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
     </copy>
   </target>
   
-  <target name="compile.module.com.examples.robertozen.tests" depends="register.custom.compilers,compile.module.com.examples.robertozen.production" description="compile module com.examples.robertozen; test classes" unless="skip.tests">
-    <mkdir dir="${com.examples.robertozen.testoutput.dir}"/>
-    <javac2 destdir="${com.examples.robertozen.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
+  <target name="compile.module.com.examples.robertozen.tests" depends="compile.module.com.examples.robertozen.production" description="compile module com.examples.robertozen; test classes" unless="skip.tests">
+    <mkdir dir="${distributedsystem.testoutput.dir}"/>
+    <javac destdir="${distributedsystem.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.com.examples.robertozen}/javac">
       <compilerarg line="${compiler.args.com.examples.robertozen}"/>
       <bootclasspath refid="com.examples.robertozen.module.bootclasspath"/>
       <classpath refid="com.examples.robertozen.module.classpath"/>
       <src refid="com.examples.robertozen.module.test.sourcepath"/>
       <patternset refid="excluded.from.compilation.com.examples.robertozen"/>
-    </javac2>
+    </javac>
     
-    <copy todir="${com.examples.robertozen.testoutput.dir}">
-      <fileset dir="${module.com.examples.robertozen.basedir}/src/test/java">
+    <copy todir="${distributedsystem.testoutput.dir}">
+      <fileset dir="${distributedsystem.basedir}/src/test/java">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
@@ -313,8 +296,8 @@
   </target>
   
   <target name="clean.module.com.examples.robertozen" description="cleanup module">
-    <delete dir="${com.examples.robertozen.output.dir}"/>
-    <delete dir="${com.examples.robertozen.testoutput.dir}"/>
+    <delete dir="${distributedsystem.output.dir}"/>
+    <delete dir="${distributedsystem.testoutput.dir}"/>
   </target>
   
   <target name="init" description="Build initialization">
@@ -324,6 +307,18 @@
   <target name="clean" depends="clean.module.com.examples.robertozen" description="cleanup all"/>
   
   <target name="build.modules" depends="init, clean, compile.module.com.examples.robertozen" description="build all modules"/>
+
+  <target name="generate-jar" depends="init, clean, compile.module.com.examples.robertozen" description="generate jar file">
+
+    <jar destfile="${distributedsystem.basedir}/project.jar"
+         basedir="${distributedsystem.output.dir}"
+         includes="**/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="com.distributedalgorithms.project.Simulator" />
+        <attribute name="Class-Path" value="${distributedsystem.output.dir}" />
+      </manifest>
+    </jar>
+  </target>
   
   <target name="all" depends="build.modules" description="build all"/>
 </project>
